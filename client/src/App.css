@@ -1,37 +1,95 @@
 :root {
-font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-line-height: 1.5;
-font-weight: 400;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  --light-blue: #add8e6;
+  --light-purple: #d8b4f8;
+  --white: #ffffff;
+  --text-dark: #333;
+  --border-color: #ccc;
+  --focus-color: #a788d9;
+  background-color: var(--light-blue);
+  color: var(--text-dark);
 }
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, var(--light-blue), var(--light-purple));
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 h1 {
-font-size: 2.4em;
-line-height: 1.1;
-margin-bottom: 1rem;
-text-align: center;
+  font-size: 2.4em;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: var(--white);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 }
-button {
-border-radius: 8px;
-border: 1px solid transparent;
-padding: 0.6em 1.2em;
-font-size: 1em;
-font-family: inherit;
-width: 100%;
-}
+
 .form-container {
-max-width: 400px;
-padding: 2rem;
+  background-color: var(--white);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 100%;
 }
+
 .input-group {
-margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
+
 label {
-margin-bottom: 0.5rem;
-font-weight: 500;
-text-align: left;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-dark);
 }
+
 input {
-width: 95%;
-padding: 0.6rem;
-border-radius: 6px;
-border: 1px solid #ccc;
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
+
+input:focus {
+  border-color: var(--focus-color);
+  box-shadow: 0 0 5px var(--focus-color);
+  outline: none;
+}
+
+button {
+  border-radius: 8px;
+  border: none;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-family: inherit;
+  background-color: var(--light-purple);
+  color: var(--white);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #c799f2;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: auto;
+}
+
