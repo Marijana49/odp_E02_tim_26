@@ -1,6 +1,6 @@
-import  { IUserRepository } from "../../../Domain/repositories/users/IUserRepository";
+import { IUserRepository } from "../../../Domain/repositories/users/IUserRepository";
 import { User } from "../../../Domain/models/User";
-import  { RowDataPacket, ResultSetHeader } from "mysql2";
+import { RowDataPacket, ResultSetHeader } from "mysql2";
 import db from "../../connection/DbConnectionPool";
 
 export class UserRepository implements IUserRepository {
