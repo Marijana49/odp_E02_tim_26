@@ -21,7 +21,7 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
   useEffect(() => {
     (async () => {
       const data = await usersApi.getSviKorisnici(token ?? "");
-      const users = data.filter(korisnik => korisnik.uloga === "User");
+      const users = data.filter(korisnik => korisnik.uloga === "user");
       setKorisnici(users);
     })();
   }, [token, usersApi]);
