@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { PročitajVrednostPoKljuču } from "../../helpers/LocalStorage";
 import { useAuth } from "../../hooks/auth/UseAuthHook";
 import type { IUsersAPIService } from "../../api_services/users/IUserApiService";
-import { TabelaKorisnika } from "../../components/kontrolna_tabla/tabelarni_prikaz_korisnika/TabelaKorisnika";
+import { TabelaAdmin } from "../../components/kontrolna_tabla/tabelarni_prikaz_korisnika/TabelaAdmin";
 
 interface KontrolnaTablaAdminStranicaProps {
   usersApi: IUsersAPIService;
@@ -23,8 +23,8 @@ export default function KontrolnaTablaAdminStranica({ usersApi }: KontrolnaTabla
   }, [isAuthenticated, logout, navigate]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-tr from-slate-600/75 to-orange-800/70 flex items-center justify-center">
-      <TabelaKorisnika usersApi={usersApi} />
+    <main>
+      <TabelaAdmin usersApi={usersApi} />
     </main>
   );
 }

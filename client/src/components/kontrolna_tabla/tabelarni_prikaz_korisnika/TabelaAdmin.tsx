@@ -9,7 +9,7 @@ interface TabelaKorisnikaProps {
   usersApi: IUsersAPIService;
 }
 
-export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
+export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
   const [korisnici, setKorisnici] = useState<UserDto[]>([]);
   const { token, logout } = useAuth();
 
@@ -21,8 +21,9 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
   useEffect(() => {
     (async () => {
       const data = await usersApi.getSviKorisnici(token ?? "");
-      const users = data.filter(korisnik => korisnik.uloga === "User");
-      setKorisnici(users);
+      const admini = data.filter(korisnik => korisnik.uloga === "Admin");
+      console.log("Svi korisnici sa servera:", data);
+      setKorisnici(admini);
     })();
   }, [token, usersApi]);
 
