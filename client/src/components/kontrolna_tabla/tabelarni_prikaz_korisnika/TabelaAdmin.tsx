@@ -22,7 +22,7 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
     (async () => {
       const data = await usersApi.getSviKorisnici(token ?? "");
       const admini = data.filter(korisnik => korisnik.uloga === "Admin");
-      console.log("Svi korisnici sa servera:", data);
+      console.log("Svi korisnici sa servera:", admini);
       setKorisnici(admini);
     })();
   }, [token, usersApi]);
