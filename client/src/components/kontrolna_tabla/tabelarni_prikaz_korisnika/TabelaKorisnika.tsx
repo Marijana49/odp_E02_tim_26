@@ -22,7 +22,6 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
     (async () => {
       const data = await usersApi.getSviKorisnici(token ?? "");
       const korisnici = data.filter(korisnik => korisnik.uloga === "user");
-      console.log("Svi korisnici sa servera:", korisnici);
       setKorisnici(korisnici);
     })();
   }, [token, usersApi]);
