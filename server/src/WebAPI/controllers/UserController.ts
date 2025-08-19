@@ -16,7 +16,7 @@ export class UserController {
 
   private initializeRoutes(): void {
     // ostale metode, npr. /api/v1/user/1 <--- user po ID-ju 1
-    this.router.get("/users", authenticate, authorize("admin"), this.korisnici.bind(this));
+    this.router.get("/users", authenticate, authorize("admin", "user"), this.korisnici.bind(this));
   }
 
   /**
@@ -27,6 +27,7 @@ export class UserController {
     try {
       const korisniciPodaci: UserDto[] =
         await this.userService.getSviKorisnici();
+         console.log("Korisnici iz baze:", korisniciPodaci);
 
       res.status(200).json(korisniciPodaci);
       return;
@@ -41,4 +42,6 @@ export class UserController {
   public getRouter(): Router {
     return this.router;
   }
+
+  
 }
