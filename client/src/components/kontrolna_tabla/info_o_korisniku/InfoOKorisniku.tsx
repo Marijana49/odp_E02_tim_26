@@ -17,10 +17,10 @@ export function InformacijeOKorisniku() {
   };
 
   return (
-    <div className="bg-white/30 backdrop-blur-lg shadow-md rounded-2xl p-10 w-full max-w-2xl border border-gray-300">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Контролна табла</h1>
+    <div>
+      <h1>Контролна табла</h1>
 
-      <div className="space-y-3 text-lg text-gray-800">
+      <div>
         <p><strong>ID:</strong> {id}</p>
         <p><strong>Корисничко име:</strong> {korisnickoIme}</p>
         <p><strong>Улога:</strong> {uloga}</p>
@@ -29,7 +29,6 @@ export function InformacijeOKorisniku() {
 
       <button
         onClick={handleLogout}
-        className="mt-8 px-4 bg-red-700/60 hover:bg-red-700/70 text-white py-2 rounded-xl  transition"
       >
         Напусти контролну таблу
       </button>
