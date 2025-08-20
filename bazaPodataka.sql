@@ -8,3 +8,10 @@ CREATE TABLE IF NOT EXISTS users (
     uloga VARCHAR(10) NOT NULL,
     lozinka VARCHAR(500) NOT NULL
 ); 
+
+CREATE TABLE IF NOT EXISTS messages (
+    korisnickoIme VARCHAR(50) NOT NULL UNIQUE FOREIGN KEY,
+    primljenePoruke VARCHAR(1000),
+    poslatePoruke VARCHAR(1000),
+    stanjePoruke VARCHAR(10)
+); 

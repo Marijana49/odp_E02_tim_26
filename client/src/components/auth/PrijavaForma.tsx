@@ -48,14 +48,13 @@ export function PrijavaForma({ authApi }: AuthFormProps) {
         {greska && <p>{greska}</p>}
         <button
           type="submit"
-          className="w-full bg-blue-700/70 hover:bg-blue-700/90 text-white py-2 rounded-xl transition"
         >
           Пријави се
         </button>
       </form>
-      <p className="text-center text-sm mt-4">
+      <p>
         Немате налог?{" "}
-        <Link to="/register" className="text-blue-700 hover:underline">
+        <Link to="/register">
           Региструјте се
         </Link>
       </p>

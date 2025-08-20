@@ -57,7 +57,7 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
       <button
         onClick={handleLogout}
       >
-        Напусти контролну таблу
+        Напусти контакте
       </button>
     </div>
   );

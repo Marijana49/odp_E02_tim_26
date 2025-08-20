@@ -59,10 +59,7 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
       >
         Напусти контакте
       </button>
-
-      <button onClick={tabelaPorukaHandler}>
-          Поруке
-      </button>
+      
 
     </div>
   );
