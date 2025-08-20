@@ -29,7 +29,7 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
   return (
     <div>
       <h2>
-        Списак корисника
+        Контакти
       </h2>
       <table>
         <thead>
@@ -57,8 +57,13 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
       <button
         onClick={handleLogout}
       >
-        Напусти контролну таблу
+        Напусти контакте
       </button>
+
+      <button onClick={tabelaPorukaHandler}>
+          Поруке
+      </button>
+
     </div>
   );
 }

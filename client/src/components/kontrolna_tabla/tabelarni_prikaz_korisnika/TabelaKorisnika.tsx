@@ -29,7 +29,7 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
   return (
     <div>
       <h2>
-        Списак корисника
+        Контакти
       </h2>
       <table>
         <thead>
