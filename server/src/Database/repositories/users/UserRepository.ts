@@ -86,15 +86,15 @@ export class UserRepository implements IUserRepository {
     try {
       const query = `
         UPDATE users 
-        SET korisnickoIme = ?, lozinka = ? 
+        SET slika = ?, brTelefona = ?, ime = ?, prezime = ? 
         WHERE id = ?
       `;
 
       const [result] = await db.execute<ResultSetHeader>(query, [
-        user.korisnickoIme,
-        user.lozinka,
-        user.uloga,
-        user.id,
+        user.slika,
+        user.brTelefona,
+        user.ime,
+        user.prezime,
       ]);
 
       if (result.affectedRows > 0) {

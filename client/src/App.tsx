@@ -13,6 +13,7 @@ import NotFoundStranica from "./pages/not_found/NotFoundPage";
 import { usersApi } from "./api_services/users/UserApiService";
 import PorukeKorisnika from './components/poruke/PorukeKorisnika';
 import { Profil } from "./components/profil/Profil";
+import { IzmjenaProfila } from "./components/profil/IzmjenaProfil";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
       <Route path="/404" element={<NotFoundStranica />} />
       <Route path="/korisnik/:id" element={<PorukeKorisnika />} />
       <Route path="/profil" element={<Profil />} />
+      <Route path="/Izmjenaprofila" element={<IzmjenaProfila />} />
 
 
         <Route
