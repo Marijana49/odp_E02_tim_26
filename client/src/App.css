@@ -96,3 +96,23 @@ button:hover {
   width: auto;
 }
 
+.profil-slika {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.profil-slika img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #c0a9c3;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.profil-slika img:hover {
+  border-color: #3b8de4;
+}

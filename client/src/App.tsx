@@ -12,6 +12,7 @@ import KontrolnaTablaAdminStranica from "./pages/kontrolna_tabla/KontrolnaTablaA
 import NotFoundStranica from "./pages/not_found/NotFoundPage";
 import { usersApi } from "./api_services/users/UserApiService";
 import PorukeKorisnika from './components/poruke/PorukeKorisnika';
+import { Profil } from "./components/profil/Profil";
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
       <Route path="/register" element={<RegistracijaStranica authApi={authApi} />} />
       <Route path="/404" element={<NotFoundStranica />} />
       <Route path="/korisnik/:id" element={<PorukeKorisnika />} />
+      <Route path="/profil" element={<Profil />} />
+
 
         <Route
           path="/user-dashboard"

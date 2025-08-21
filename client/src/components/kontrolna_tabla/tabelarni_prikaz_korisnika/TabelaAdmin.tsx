@@ -4,6 +4,9 @@ import type { UserDto } from "../../../models/users/UserDTO";
 import { RedUTabeliKorisnika } from "./RedUTabeliKorisnika";
 import { useAuth } from "../../../hooks/auth/UseAuthHook";
 import { ObrišiVrednostPoKljuču } from "../../../helpers/LocalStorage";
+import { Link } from "react-router-dom";
+import defaultAvatar from "../../../assets/default-avatar.svg.png";
+
 
 interface TabelaKorisnikaProps {
   usersApi: IUsersAPIService;
@@ -28,6 +31,14 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
 
   return (
     <div>
+      <div className="profil-ikona">
+        <Link to="/profil" title="Moj profil">
+          <img
+          src={defaultAvatar} //user?.slikaUrl || defaultAvatar
+          alt="Profil"
+        />
+        </Link>
+      </div>
       <h2>
         Контакти
       </h2>
