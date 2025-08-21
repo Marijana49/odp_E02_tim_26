@@ -32,7 +32,7 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
   return (
     <div>
       <div className="profil-ikona">
-        <Link to="/profil" title="Moj profil">
+        <Link to="/profil" title="Мој профил">
           <img
           src={defaultAvatar} //user?.slikaUrl || defaultAvatar
           alt="Profil"
