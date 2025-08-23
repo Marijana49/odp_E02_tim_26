@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/auth/UseAuthHook";
 import { updateUser } from "../../api_services/users/UpdateUser"; 
 
-export function IzmjenaProfila() {
+export function IzmjenaProfil() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
 
@@ -14,29 +14,35 @@ export function IzmjenaProfila() {
   const [greska, setGreska] = useState("");
 
   const podnesiFormu = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const noviPodaci = {
-        korisnickoIme: user?.korisnickoIme,
-        ime,
-        prezime,
-        brTelefona,
-        slika,
-      };
+  if (!user?.id) {
+    setGreska("Недостаје ID корисника.");
+    return;
+  }
 
-      const odgovor = await updateUser(noviPodaci); // Poziv ka API-ju
+  try {
+    const noviPodaci = {
+      id: user.id,
+      ime,
+      prezime,
+      brTelefona,
+      slika,
+    };
 
-      if (odgovor.success && odgovor.data) {
-        login(odgovor.data); // Ažuriraj auth kontekst
-        navigate("/profil");
-      } else {
-        setGreska(odgovor.message || "Дошло је до грешке при ажурирању.");
-      }
-    } catch (err) {
-      setGreska("Грешка на серверу.");
+    const odgovor = await updateUser(noviPodaci);
+
+    if (odgovor.success && odgovor.data) {
+      login(odgovor.data); // Ažuriraj auth kontekst
+      navigate("/profil");
+    } else {
+      setGreska(odgovor.message || "Дошло је до грешке при ажурирању.");
     }
-  };
+  } catch (err) {
+    setGreska("Грешка на серверу.");
+  }
+};
+
 
   return (
     <div>
@@ -45,6 +51,7 @@ export function IzmjenaProfila() {
         <input
           type="text"
           placeholder="Име"
+          name="ime"
           value={ime}
           onChange={(e) => setIme(e.target.value)}
         />
@@ -52,18 +59,21 @@ export function IzmjenaProfila() {
           type="text"
           placeholder="Презиме"
           value={prezime}
+          name="prezime"
           onChange={(e) => setPrezime(e.target.value)}
         />
         <input
           type="text"
           placeholder="Број телефона"
           value={brTelefona}
+          name="brTel"
           onChange={(e) => setBrTelefona(e.target.value)}
         />
         <input
           type="text"
           placeholder="Линк до слике"
           value={slika}
+          name="slika"
           onChange={(e) => setSlika(e.target.value)}
         />
         {greska && <p>{greska}</p>}

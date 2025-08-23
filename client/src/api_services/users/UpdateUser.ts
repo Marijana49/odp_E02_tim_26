@@ -1,17 +1,16 @@
-// Primer TypeScript API poziva
-export async function updateUser(userData: any) {
-  try {
-    const res = await fetch(`/api_services/users/${userData.korisnickoIme}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    });
+import axios from "axios";
 
-    const data = await res.json();
-    return { success: res.ok, data, message: data.message };
-  } catch (err) {
-    return { success: false, message: "Server error" };
+export async function updateUser(podaci: {
+  id: number;
+  ime: string;
+  prezime: string;
+  brTelefona: string;
+  slika: string;
+}) {
+  try {
+    const response = await axios.put("/api/v1/users/update", podaci);
+    return response.data;
+  } catch (error) {
+    return { success: false, message: "Грешка на серверу." };
   }
 }

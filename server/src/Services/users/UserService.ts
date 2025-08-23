@@ -14,4 +14,31 @@ export class UserService implements IUserService {
 
     return korisniciDto;
   }
+
+  async azurirajKorisnika(dto: UserDto): Promise<UserDto | null> {
+  if (!dto.id) return null;
+
+  const postojeci = await this.userRepository.getById(dto.id);
+  if (!postojeci.id) return null;
+
+  postojeci.ime = dto.ime ?? postojeci.ime;
+  postojeci.prezime = dto.prezime ?? postojeci.prezime;
+  postojeci.brTelefona = dto.brTelefona ?? postojeci.brTelefona;
+  postojeci.slika = dto.slika ?? postojeci.slika;
+
+  const azuriran = await this.userRepository.update(postojeci);
+
+  if (!azuriran.id) return null;
+
+  return {
+    id: azuriran.id,
+    korisnickoIme: azuriran.korisnickoIme,
+    uloga: azuriran.uloga,
+    ime: azuriran.ime,
+    prezime: azuriran.prezime,
+    brTelefona: azuriran.brTelefona,
+    slika: azuriran.slika,
+  };
+}
+
 }
