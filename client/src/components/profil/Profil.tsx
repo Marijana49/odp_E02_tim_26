@@ -1,17 +1,60 @@
+import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/auth/UseAuthHook";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
+import type { IUsersAPIService } from "../../api_services/users/IUserApiService";
+import type { UserDto } from "../../models/users/UserDTO";
 
-export function Profil() {
-  const { user } = useAuth();
+interface ProfilProps {
+  usersApi: IUsersAPIService;
+}
+
+export function Profil({ usersApi }: ProfilProps) {
+  const { user, token } = useAuth();
+  const [userData, setUserData] = useState<UserDto | null>(null);
+  const [loading, setLoading] = useState(true);  
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user?.id && token) {
+        try {
+          const data = await usersApi.getKorisnikById(token, user.id);
+          if(data !== null) 
+            setUserData(data);  
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        } finally {
+          setLoading(false); 
+        }
+      }
+    };
+    fetchUserData();
+  }, [user?.id, token, usersApi]);
 
   return (
     <div>
       <h2>Профил</h2>
-      <p>Корисничко име: {user?.korisnickoIme}</p>
-      <p>Профилна слика: {user?.slika}</p>
-      <p>Број телефона: {user?.brTelefona}</p>  
-      <p>Име: {user?.ime}</p>  
-      <p>Презиме: {user?.prezime}</p>    
+      {loading ? (
+        <p>Loading...</p>
+      ) : userData ? (
+        <> 
+            <div style={{display: "flex", alignItems: "center", gap: "50px", marginBottom: "10px"}}>
+            <p>Профилна слика:</p>
+            <img
+              src={userData.slika ? userData.slika : "/defaultProfilePicture.jpg"}
+              alt="Профилна слика"
+              onError={(e) => (e.currentTarget.src = "/defaultProfilePicture.jpg")}
+              style={{ width: "60px", height: "60px", borderRadius: "50%", objectFit: "cover" }}
+            />
+            </div> 
+          
+          <p>Корисничко име: {userData?.korisnickoIme}</p>
+          <p>Име: {userData?.ime}</p>
+          <p>Презиме: {userData?.prezime}</p>
+          <p>Број телефона: {userData?.brTelefona}</p>
+        </>
+      ) : (
+        <p>No user data found.</p>  
+      )}
 
       <div style={{ marginTop: "20px" }}>
         {user?.uloga === "admin" ? (
@@ -30,3 +73,4 @@ export function Profil() {
     </div>
   );
 }
+

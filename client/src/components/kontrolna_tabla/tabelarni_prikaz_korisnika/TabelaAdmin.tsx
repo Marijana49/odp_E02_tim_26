@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { IUsersAPIService } from "../../../api_services/users/IUserApiService";
-import type { UserDto } from "../../../models/users/UserDTO";
+import type { UserBaseInfoDto } from "../../../models/users/UserBaseInfoDTO";
 import { RedUTabeliKorisnika } from "./RedUTabeliKorisnika";
 import { useAuth } from "../../../hooks/auth/UseAuthHook";
 import { ObrišiVrednostPoKljuču } from "../../../helpers/LocalStorage";
@@ -13,7 +13,7 @@ interface TabelaKorisnikaProps {
 }
 
 export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
-  const [korisnici, setKorisnici] = useState<UserDto[]>([]);
+  const [korisnici, setKorisnici] = useState<UserBaseInfoDto[]>([]);
   const { token, logout } = useAuth();
 
    const handleLogout = () => {

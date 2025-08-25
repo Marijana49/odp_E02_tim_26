@@ -5,7 +5,7 @@ function PorukeKorisnika() {
 
   return (
     <div>
-      <h2>Detalji korisnika</h2>
+      <h2>Поруке</h2>
       <p>ID korisnika: {id}</p>
       {/* Ovdje možeš učitati detalje korisnika sa backenda po ID-u */}
     </div>

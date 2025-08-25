@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import type { UserDto } from "../../../models/users/UserDTO";
+import type { UserBaseInfoDto } from "../../../models/users/UserBaseInfoDTO";
 
 interface RedUTabeliKorisnikaProps {
-  korisnik: UserDto;
+  korisnik: UserBaseInfoDto;
 }
 
 export function RedUTabeliKorisnika({ korisnik }: RedUTabeliKorisnikaProps) {

@@ -35,10 +35,10 @@ export class UserRepository implements IUserRepository {
     try {
       const query = `SELECT *FROM users WHERE id = ?`;
       const [rows] = await db.execute<RowDataPacket[]>(query, [id]);
-
+      console.log(rows)
       if (rows.length > 0) {
         const row = rows[0];
-        return new User(row.id, row.korisnickoIme, row.uloga, row.lozinka);
+        return new User(row.id, row.korisnickoIme, row.uloga, row.lozinka, row.slike, row.brTelefona, row.ime, row.prezime);
       }
 
       return new User();
@@ -86,7 +86,7 @@ export class UserRepository implements IUserRepository {
     try {
       const query = `
         UPDATE users 
-        SET slika = ?, brTelefona = ?, ime = ?, prezime = ? 
+        SET slike = ?, brTelefona = ?, ime = ?, prezime = ? 
         WHERE id = ?
       `;
 
@@ -95,6 +95,7 @@ export class UserRepository implements IUserRepository {
         user.brTelefona,
         user.ime,
         user.prezime,
+        user.id,
       ]);
 
       if (result.affectedRows > 0) {
@@ -102,7 +103,8 @@ export class UserRepository implements IUserRepository {
       }
 
       return new User();
-    } catch {
+    } catch (err) {
+      console.log(err)
       return new User();
     }
   }
