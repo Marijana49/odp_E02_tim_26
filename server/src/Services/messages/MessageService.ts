@@ -41,4 +41,25 @@ export class MessageService implements IMessageService {
       stanje: azuriran.stanje,
     };
   }
+
+  async posaljiPoruku(dto: MessageDto): Promise<MessageDto> {
+    const novaPoruka = new Poruka(
+      dto.korIme,
+      dto.ulogovani,
+      dto.primljenaPoruka ?? '',
+      dto.poslataPoruka ?? '',
+      dto.stanje
+    );
+
+    const kreirana = await this.messRepo.create(novaPoruka);
+
+    return new MessageDto(
+      kreirana.korIme,
+      kreirana.ulogovani,
+      kreirana.primljenaPoruka,
+      kreirana.poslataPoruka,
+      kreirana.stanje
+    );
+  }
+
 }

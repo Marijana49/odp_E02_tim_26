@@ -15,10 +15,10 @@ export class MessageController {
   }
 
   private initializeRoutes(): void {
-    // ostale metode, npr. /api/v1/user/1 <--- user po ID-ju 1
     this.router.get("/message/:korIme", this.porukaByKorIme.bind(this));
     this.router.get("/messages",  this.poruke.bind(this));
     this.router.put("/messages/update", this.azurirajPoruku.bind(this));
+    this.router.post('/messages', this.posaljiPoruku.bind(this));
   }
 
   private async porukaByKorIme(req: Request, res: Response): Promise<void> {
@@ -44,7 +44,7 @@ export class MessageController {
 }
 
   /**
-   * GET /api/v1/users
+   * GET /api/v1/messages
    * Svi korisnici
    */
   private async poruke(req: Request, res: Response): Promise<void> {
@@ -67,7 +67,7 @@ export class MessageController {
     return this.router;
   }
 
-// PUT /api/v1/users/update
+// PUT /api/v1/messages/update
 private async azurirajPoruku(req: Request, res: Response): Promise<void> {
   try {
     console.log(req.body)
@@ -84,4 +84,31 @@ private async azurirajPoruku(req: Request, res: Response): Promise<void> {
   }
 }
 
+/**
+   * POST /api/v1/auth/register
+   * Registracija novog korisnika
+   */
+  private async posaljiPoruku(req: Request, res: Response): Promise<void> {
+    try {
+    const { korIme, ulogovani, primljenaPoruka, poslataPoruka, stanje } = req.body;
+
+    if (!korIme || !ulogovani || !stanje) {
+      res.status(400).json({ success: false, message: "Недостају подаци за поруку." });
+      return;
+    }
+
+    const novaPoruka = await this.messageService.posaljiPoruku({
+      korIme,
+      ulogovani,
+      primljenaPoruka: primljenaPoruka || '',
+      poslataPoruka: poslataPoruka || '',
+      stanje
+    });
+
+    res.status(201).json(novaPoruka);
+  } catch (error) {
+    console.error("Грешка при слању поруке:", error);
+    res.status(500).json({ success: false, message: "Грешка на серверу." });
+  }
+}
 }

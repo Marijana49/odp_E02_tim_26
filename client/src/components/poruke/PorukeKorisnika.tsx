@@ -1,32 +1,45 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Poruka } from '../../../../server/src/Domain/models/Poruka';
 import { PorukaEnum } from '../../../../server/src/Domain/enums/PorukaEnum';
-import { MessagesApi } from '../../api_services/messages/MessageApiService';
-import { useMessAuth } from '../../hooks/auth/UseMessAuthHooks';
 import { useAuth } from '../../hooks/auth/UseAuthHook';
+import { usersApi } from "../../api_services/users/UserApiService";
+import { MessagesApi } from '../../api_services/messages/MessageApiService';
 
 function PorukeKorisnika() {
-  const { korIme } = useParams<{ korIme: string }>();
-  const navigate = useNavigate();
-  const { user } = useAuth(); // trenutni ulogovani korisnik
-  const { token } = useMessAuth();
-
+  const { id } = useParams<{ id: string }>();
   const [poruke, setPoruke] = useState<Poruka[]>([]);
   const [novaPoruka, setNovaPoruka] = useState('');
+  const [kontakt, setKontakt] = useState(''); //kontakt koji komunicira sa userom
+  const { user, token } = useAuth(); //moj ulogovani user
 
-  // Učitaj sve poruke
   useEffect(() => {
-    if (!token || !user || !korIme) return;
+    if (id && token) {
+      const fetchContact = async () => {
+        try {
+          const data = await usersApi.getKorisnikById(token, parseInt(id));
+          console.log(data)
+          if (data) {
+            setKontakt(data.korisnickoIme);
+          }
+        } catch (error) {
+          console.error("Greska pri dobavljanju korisnika iz kontakta:", error);
+        }
+      }
+      fetchContact();
+    }
+  }, [id, token, usersApi]);
+
+  useEffect(() => {
+    if (!token || !user || !kontakt) return;
 
     const fetchPoruke = async () => {
       try {
         const svePoruke = await MessagesApi.getSvePoruke(token);
 
-        // Filtriraj samo poruke između ulogovanog korisnika i korisnika iz URL-a
         const filtrirane = svePoruke.filter(p =>
-          (p.ulogovani === user.korisnickoIme && p.korIme === korIme) ||
-          (p.ulogovani === korIme && p.korIme === user.korisnickoIme)
+          (p.ulogovani === user.korisnickoIme && p.korIme === kontakt) ||
+          (p.ulogovani === kontakt && p.korIme === user.korisnickoIme)
         );
 
         setPoruke(filtrirane);
@@ -34,64 +47,50 @@ function PorukeKorisnika() {
         console.error("Greška pri učitavanju poruka:", err);
       }
     };
-
     fetchPoruke();
-  }, [token, user, korIme]);
+  }, [token, user, kontakt]);
 
-  // Slanje nove poruke
-  const posaljiPoruku = async () => {
-    if (!novaPoruka.trim() || !user) return; // || !korIme
+  const posaljiOvuPoruku = async () => {
+    if (novaPoruka.trim() === '') return;
 
-    const nova = {
-      korIme: korIme,
-      ulogovani: user.korisnickoIme,
-      poslataPoruka: novaPoruka,
-      primljenaPoruka: "",
-      stanje: PorukaEnum.Poslato
-    } as Poruka;
+    const nova = new Poruka(
+      kontakt,
+      user?.korisnickoIme,
+      '',
+      novaPoruka,
+      PorukaEnum.Poslato
+    );
 
     try {
       const novaSaServera = await MessagesApi.posaljiPoruku(nova, token ?? "");
 
-      // Ažuriraj listu poruka
       setPoruke(prev => [...prev, novaSaServera]);
       setNovaPoruka('');
     } catch (error) {
       console.error('Greška pri slanju poruke:', error);
     }
-  };
+    console.log(poruke, novaPoruka);
 
-  const handleNazad = () => {
-    if (!user) return;
-
-    if (user.uloga === 'admin') {
-      navigate('/admin-dashboard');
-    } else {
-      navigate('/user-dashboard');
-    }
   };
 
   return (
     <div className="messenger-container">
-      <h2>Поруке са корисником {korIme}</h2>
-
-      <button className="back-button" onClick={handleNazad}>
-        ← Nazad na kontakte
-      </button>
-
+      <h2>Поруке са корисником {kontakt}</h2>
       <div className="poruke-box">
         {poruke.map((poruka, index) => {
           const jeMoja = poruka.ulogovani === user?.korisnickoIme;
           const tekst = jeMoja ? poruka.poslataPoruka : poruka.primljenaPoruka;
 
           return (
-            <div key={index} className={`poruka ${jeMoja ? 'moja' : 'njihova'}`}>
+            <div
+              key={index}
+              className={`poruka ${jeMoja ? 'moja' : 'njihova'}`}
+            >
               {tekst}
             </div>
           );
         })}
       </div>
-
       <div className="input-box">
         <input
           type="text"
@@ -99,7 +98,7 @@ function PorukeKorisnika() {
           onChange={(e) => setNovaPoruka(e.target.value)}
           placeholder="Upiši poruku..."
         />
-        <button onClick={posaljiPoruku}>Pošalji</button>
+        <button onClick={posaljiOvuPoruku}>Pošalji</button>
       </div>
     </div>
   );
