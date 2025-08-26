@@ -17,7 +17,7 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
   const [slika, setSlika] = useState<string>("");
   const [greska, setGreska] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [slikaFIle, setSlikaFile] = useState<File | null>(null);
+  const [, setSlikaFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (user?.id && token) {
