@@ -17,6 +17,7 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
   const [slika, setSlika] = useState<string>("");
   const [greska, setGreska] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const [slikaFIle, setSlikaFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (user?.id && token) {
@@ -100,13 +101,23 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
             onChange={(e) => setBrTelefona(e.target.value)}
           />
           <input
-            type="text"
-            placeholder="Линк до слике"
-            value={slika}
+            type="file"
+            placeholder="Профилна слика"
             name="slika"
-            onChange={(e) => setSlika(e.target.value)}
+            accept="image/*"
+            onChange={(e) => {
+              if(e.target.files && e.target.files.length > 0){
+                const file = e.target.files[0];
+                setSlikaFile(file);
+
+                const imageUrl = URL.createObjectURL(file);
+                setSlika(imageUrl);
+              }
+            }}
           />
+          {slika && <img src={slika} alt="Preview" style={{maxWidth: "200px", marginTop: "10px"}}/>}
           {greska && <p>{greska}</p>}
+          <br></br>
           <button type="submit" className="btn">Сачувај измјене</button>
           <button className="btn btn-nazad">Назад на профил</button>
         </form>
