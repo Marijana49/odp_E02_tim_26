@@ -1,4 +1,4 @@
-export type AuthMessage = {
+export type JwtTokenMessage = {
     korIme: string;
     ulogovani: string;
 }

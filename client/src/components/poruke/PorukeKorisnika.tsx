@@ -1,43 +1,73 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Poruka } from '../../../../server/src/Domain/models/Poruka';
 import { PorukaEnum } from '../../../../server/src/Domain/enums/PorukaEnum';
 import { MessagesApi } from '../../api_services/messages/MessageApiService';
+import { useMessAuth } from '../../hooks/auth/UseMessAuthHooks';
 import { useAuth } from '../../hooks/auth/UseAuthHook';
 
 function PorukeKorisnika() {
   const { korIme } = useParams<{ korIme: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth(); // trenutni ulogovani korisnik
+  const { token } = useMessAuth();
 
   const [poruke, setPoruke] = useState<Poruka[]>([]);
   const [novaPoruka, setNovaPoruka] = useState('');
-  const { token, logout } = useAuth();
 
+  // Učitaj sve poruke
   useEffect(() => {
-    (async () => {
-      const data = await MessagesApi.getSvePoruke(token ?? "");
-      const korisnici = data.filter(korisnik => korisnik.uloga === "user");
-      setKorisnici(korisnici);
-    })();
-  }, [token, usersApi]);
+    if (!token || !user || !korIme) return;
 
+    const fetchPoruke = async () => {
+      try {
+        const svePoruke = await MessagesApi.getSvePoruke(token);
+
+        // Filtriraj samo poruke između ulogovanog korisnika i korisnika iz URL-a
+        const filtrirane = svePoruke.filter(p =>
+          (p.ulogovani === user.korisnickoIme && p.korIme === korIme) ||
+          (p.ulogovani === korIme && p.korIme === user.korisnickoIme)
+        );
+
+        setPoruke(filtrirane);
+      } catch (err) {
+        console.error("Greška pri učitavanju poruka:", err);
+      }
+    };
+
+    fetchPoruke();
+  }, [token, user, korIme]);
+
+  // Slanje nove poruke
   const posaljiPoruku = async () => {
-    if (novaPoruka.trim() === '') return;
+    if (!novaPoruka.trim() || !user) return; // || !korIme
 
-    const nova = new Poruka(
-      `korisnik${korIme}`,
-      '',
-      novaPoruka,
-      PorukaEnum.Poslato
-    );
+    const nova = {
+      korIme: korIme,
+      ulogovani: user.korisnickoIme,
+      poslataPoruka: novaPoruka,
+      primljenaPoruka: "",
+      stanje: PorukaEnum.Poslato
+    } as Poruka;
 
     try {
-      const res = await axios.post('http://localhost:4000/api/messages', nova);
-      setPoruke([...poruke, nova]);
+      const novaSaServera = await MessagesApi.posaljiPoruku(nova, token ?? "");
+
+      // Ažuriraj listu poruka
+      setPoruke(prev => [...prev, novaSaServera]);
       setNovaPoruka('');
     } catch (error) {
       console.error('Greška pri slanju poruke:', error);
+    }
+  };
+
+  const handleNazad = () => {
+    if (!user) return;
+
+    if (user.uloga === 'admin') {
+      navigate('/admin-dashboard');
+    } else {
+      navigate('/user-dashboard');
     }
   };
 
@@ -45,20 +75,17 @@ function PorukeKorisnika() {
     <div className="messenger-container">
       <h2>Поруке са корисником {korIme}</h2>
 
-      <button className="back-button" onClick={() => navigate('/kontakti')}>
+      <button className="back-button" onClick={handleNazad}>
         ← Nazad na kontakte
       </button>
 
       <div className="poruke-box">
         {poruke.map((poruka, index) => {
-          const jeMoja = poruka.stanje === PorukaEnum.Poslato;
+          const jeMoja = poruka.ulogovani === user?.korisnickoIme;
           const tekst = jeMoja ? poruka.poslataPoruka : poruka.primljenaPoruka;
 
           return (
-            <div
-              key={index}
-              className={`poruka ${jeMoja ? 'moja' : 'njihova'}`}
-            >
+            <div key={index} className={`poruka ${jeMoja ? 'moja' : 'njihova'}`}>
               {tekst}
             </div>
           );

@@ -13,7 +13,7 @@ export class MessageService implements IMessageService {
   async getSvePoruke(): Promise<MessageDto[]> {
     const poruke: Poruka[] = await this.messRepo.getAll();
     const porukeDTO: MessageDto[] = poruke.map(
-      (poruka) => new MessageDto(poruka.korIme, poruka.primljenaPoruka, poruka.poslataPoruka, poruka.stanje)
+      (poruka) => new MessageDto(poruka.korIme, poruka.ulogovani, poruka.primljenaPoruka, poruka.poslataPoruka, poruka.stanje)
     );
 
     return porukeDTO;
@@ -24,6 +24,7 @@ export class MessageService implements IMessageService {
     if (!postojeci.korIme) return null;
 
     postojeci.korIme = dto.korIme ?? postojeci.korIme;
+    postojeci.ulogovani = dto.ulogovani ?? postojeci.ulogovani;
     postojeci.primljenaPoruka = dto.primljenaPoruka ?? postojeci.primljenaPoruka;
     postojeci.poslataPoruka = dto.poslataPoruka ?? postojeci.poslataPoruka;
     postojeci.stanje = dto.stanje ?? postojeci.stanje;
@@ -34,6 +35,7 @@ export class MessageService implements IMessageService {
 
     return {
       korIme: azuriran.korIme,
+      ulogovani: azuriran.ulogovani,
       primljenaPoruka: azuriran.primljenaPoruka,
       poslataPoruka: azuriran.poslataPoruka,
       stanje: azuriran.stanje,
