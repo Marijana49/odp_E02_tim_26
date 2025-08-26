@@ -21,7 +21,7 @@ function App() {
       <Route path="/login" element={<PrijavaStranica authApi={authApi} />} />
       <Route path="/register" element={<RegistracijaStranica authApi={authApi} />} />
       <Route path="/404" element={<NotFoundStranica />} />
-      <Route path="/korisnik/:id" element={<PorukeKorisnika />} />
+      <Route path="/korisnik/:id" element={<PorukeKorisnika />} /> 
       <Route path="/profil" element={<Profil usersApi={usersApi} />} />
       <Route path="/Izmjenaprofila" element={<IzmjenaProfil usersApi={usersApi} />} />
       <Route path="/poruke/:korIme" element={<PorukeKorisnika />} />

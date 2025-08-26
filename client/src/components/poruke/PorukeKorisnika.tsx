@@ -1,57 +1,84 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Poruka } from '../../../../server/src/Domain/models/Poruka';
 import { PorukaEnum } from '../../../../server/src/Domain/enums/PorukaEnum';
-import { MessagesApi } from '../../api_services/messages/MessageApiService';
 import { useAuth } from '../../hooks/auth/UseAuthHook';
+import { usersApi } from "../../api_services/users/UserApiService";
+import { MessagesApi } from '../../api_services/messages/MessageApiService';
 
 function PorukeKorisnika() {
-  const { korIme } = useParams<{ korIme: string }>();
-  const navigate = useNavigate();
-
+  const { id } = useParams<{ id: string }>();
   const [poruke, setPoruke] = useState<Poruka[]>([]);
   const [novaPoruka, setNovaPoruka] = useState('');
-  const { token, logout } = useAuth();
+  const [kontakt, setKontakt] = useState(''); //kontakt koji komunicira sa userom
+  const { user, token } = useAuth(); //moj ulogovani user
 
   useEffect(() => {
-    (async () => {
-      const data = await MessagesApi.getSvePoruke(token ?? "");
-      const korisnici = data.filter(korisnik => korisnik.uloga === "user");
-      setKorisnici(korisnici);
-    })();
-  }, [token, usersApi]);
+    if (id && token) {
+      const fetchContact = async () => {
+        try {
+          const data = await usersApi.getKorisnikById(token, parseInt(id));
+          console.log(data)
+          if (data) {
+            setKontakt(data.korisnickoIme);
+          }
+        } catch (error) {
+          console.error("Greska pri dobavljanju korisnika iz kontakta:", error);
+        }
+      }
+      fetchContact();
+    }
+  }, [id, token, usersApi]);
 
-  const posaljiPoruku = async () => {
+  useEffect(() => {
+    if (!token || !user || !kontakt) return;
+
+    const fetchPoruke = async () => {
+      try {
+        const svePoruke = await MessagesApi.getSvePoruke(token);
+
+        const filtrirane = svePoruke.filter(p =>
+          (p.ulogovani === user.korisnickoIme && p.korIme === kontakt) ||
+          (p.ulogovani === kontakt && p.korIme === user.korisnickoIme)
+        );
+
+        setPoruke(filtrirane);
+      } catch (err) {
+        console.error("Greška pri učitavanju poruka:", err);
+      }
+    };
+    fetchPoruke();
+  }, [token, user, kontakt]);
+
+  const posaljiOvuPoruku = async () => {
     if (novaPoruka.trim() === '') return;
 
     const nova = new Poruka(
-      `korisnik${korIme}`,
+      kontakt,
+      user?.korisnickoIme,
       '',
       novaPoruka,
       PorukaEnum.Poslato
     );
 
     try {
-      const res = await axios.post('http://localhost:4000/api/messages', nova);
-      setPoruke([...poruke, nova]);
+      const novaSaServera = await MessagesApi.posaljiPoruku(nova, token ?? "");
+
+      setPoruke(prev => [...prev, novaSaServera]);
       setNovaPoruka('');
     } catch (error) {
       console.error('Greška pri slanju poruke:', error);
     }
+    console.log(poruke, novaPoruka);
+
   };
 
   return (
     <div className="messenger-container">
-      <h2>Поруке са корисником {korIme}</h2>
-
-      <button className="back-button" onClick={() => navigate('/kontakti')}>
-        ← Nazad na kontakte
-      </button>
-
+      <h2>Поруке са корисником {kontakt}</h2>
       <div className="poruke-box">
         {poruke.map((poruka, index) => {
-          const jeMoja = poruka.stanje === PorukaEnum.Poslato;
+          const jeMoja = poruka.ulogovani === user?.korisnickoIme;
           const tekst = jeMoja ? poruka.poslataPoruka : poruka.primljenaPoruka;
 
           return (
@@ -64,7 +91,6 @@ function PorukeKorisnika() {
           );
         })}
       </div>
-
       <div className="input-box">
         <input
           type="text"
@@ -72,7 +98,7 @@ function PorukeKorisnika() {
           onChange={(e) => setNovaPoruka(e.target.value)}
           placeholder="Upiši poruku..."
         />
-        <button onClick={posaljiPoruku}>Pošalji</button>
+        <button onClick={posaljiOvuPoruku}>Pošalji</button>
       </div>
     </div>
   );

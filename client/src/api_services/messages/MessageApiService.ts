@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { IMessageAPIService } from "./IMessageApiService";
 import type { MessageDto } from "../../models/messages/MessageDTO";
+import type { Poruka } from "../../../../server/src/Domain/models/Poruka";
 
 const API_URL: string = import.meta.env.VITE_API_URL + "messages";
 
@@ -31,5 +32,20 @@ export const MessagesApi: IMessageAPIService = {
       return false;
     }
   },
+
+  async posaljiPoruku(poruka: Poruka, token: string): Promise<Poruka> {
+  try {
+    const res = await axios.post<Poruka>(`${API_URL}`, poruka, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Greška pri slanju poruke:", error);
+    throw error;
+  }
+}
+
 
 };

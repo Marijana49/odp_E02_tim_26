@@ -8,12 +8,13 @@ export class MessageRepository implements IMessageRepo {
   async create(mess: Poruka): Promise<Poruka> {
     try {
       const query = `
-        INSERT INTO mess (korIme, primljenaPoruka, poslataPoruka, stanje) 
+        INSERT INTO mess (korIme, ulogovani, primljenaPoruka, poslataPoruka, stanje) 
         VALUES (?, ?, ?, ?)
       `;
 
       const [result] = await db.execute<ResultSetHeader>(query, [
         mess.korIme,
+        mess.ulogovani,
         mess.primljenaPoruka,
         mess.poslataPoruka,
         mess.stanje
@@ -21,13 +22,13 @@ export class MessageRepository implements IMessageRepo {
 
 
       if (result.insertId) {
-        return new Poruka(mess.korIme, mess.primljenaPoruka, mess.poslataPoruka, mess.stanje);
+        return new Poruka(mess.korIme, mess.ulogovani, mess.primljenaPoruka, mess.poslataPoruka, mess.stanje);
       }
 
-      return new Poruka(undefined, undefined, undefined, PorukaEnum.Poslato);
+      return new Poruka();
     } catch (error) {
       console.error('Error creating user:', error);
-      return new Poruka(undefined, undefined, undefined, PorukaEnum.Poslato);
+      return new Poruka();
     }
   }
 
@@ -37,7 +38,7 @@ export class MessageRepository implements IMessageRepo {
       const [rows] = await db.execute<RowDataPacket[]>(query);
 
       return rows.map(
-        (row) => new Poruka(row.korIme, row.primljenaPoruka, row.poslataPoruka, row.stanje)
+        (row) => new Poruka(row.korIme, row.ulogovani, row.primljenaPoruka, row.poslataPoruka, row.stanje)
       );
     } catch {
       return [];
@@ -63,9 +64,9 @@ export class MessageRepository implements IMessageRepo {
         return mess;
       }
 
-       return new Poruka(undefined, undefined, undefined, PorukaEnum.Poslato);
+       return new Poruka();
     } catch {
-       return new Poruka(undefined, undefined, undefined, PorukaEnum.Poslato);
+       return new Poruka();
     }
   }
 
@@ -103,7 +104,7 @@ export class MessageRepository implements IMessageRepo {
   async getByUsername(korIme: string): Promise<Poruka> {
     try {
       const query = `
-        SELECT korIme, primljenaPoruka, poslataPoruka, stanje
+        SELECT korIme, ulogovani, primljenaPoruka, poslataPoruka, stanje
         FROM messages 
         WHERE korIme = ?
       `;
@@ -112,7 +113,7 @@ export class MessageRepository implements IMessageRepo {
 
       if (rows.length > 0) {
         const row = rows[0];
-        return new Poruka(row.korIme, row.primljenaPoruka, row.poslataPoruka, row.stanje);
+        return new Poruka(row.korIme, row.ulogovani, row.primljenaPoruka, row.poslataPoruka, row.stanje);
       }
 
       return new Poruka();
