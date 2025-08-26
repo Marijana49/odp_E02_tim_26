@@ -13,7 +13,7 @@ interface TabelaKorisnikaProps {
 
 export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
   const [korisnici, setKorisnici] = useState<UserBaseInfoDto[]>([]);
-  const { token, logout } = useAuth();
+  const { token, logout} = useAuth();
 
    const handleLogout = () => {
     ObrišiVrednostPoKljuču("authToken");
@@ -33,7 +33,7 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
       <div className="profil-ikona">
         <Link to="/profil" title="Мој профил">
           <img
-          src={defaultAvatar} //user?.slikaUrl || defaultAvatar
+          src={defaultAvatar} 
           alt="Profil"
         />
         </Link>
