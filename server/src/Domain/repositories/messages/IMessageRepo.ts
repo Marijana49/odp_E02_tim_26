@@ -38,4 +38,11 @@ export interface IMessageRepo {
    * @returns Promise koji vraća true ako korisnik postoji, false inače
    */
   exists(korIme: string): Promise<boolean>;
+
+  /**
+   * Pronalazi korisnika po korisničkom imenu
+   * @param korIme - Korisničko ime za pretragu
+   * @returns Promise koji vraća korisnika ili prazan objekat ako nije pronađen
+   */
+  getByUsername(korIme: string): Promise<Poruka>;
 }

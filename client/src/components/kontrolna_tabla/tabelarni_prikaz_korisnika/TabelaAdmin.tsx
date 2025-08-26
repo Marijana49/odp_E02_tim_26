@@ -5,7 +5,7 @@ import { RedUTabeliKorisnika } from "./RedUTabeliKorisnika";
 import { useAuth } from "../../../hooks/auth/UseAuthHook";
 import { ObrišiVrednostPoKljuču } from "../../../helpers/LocalStorage";
 import { Link } from "react-router-dom";
-import defaultAvatar from "../../../assets/default-avatar.svg.png";
+import defaultAvatar from "../../../../public/defaultProfilePicture.jpg";
 
 
 interface TabelaKorisnikaProps {

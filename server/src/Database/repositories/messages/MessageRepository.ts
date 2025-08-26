@@ -99,4 +99,27 @@ export class MessageRepository implements IMessageRepo {
       return false;
     }
   }
+
+  async getByUsername(korIme: string): Promise<Poruka> {
+    try {
+      const query = `
+        SELECT korIme, primljenaPoruka, poslataPoruka, stanje
+        FROM messages 
+        WHERE korIme = ?
+      `;
+
+      const [rows] = await db.execute<RowDataPacket[]>(query, [korIme]);
+
+      if (rows.length > 0) {
+        const row = rows[0];
+        return new Poruka(row.korIme, row.primljenaPoruka, row.poslataPoruka, row.stanje);
+      }
+
+      return new Poruka();
+    } catch (error) {
+      console.log("message get by username: " + error);
+      return new Poruka();
+    }
+  }
+
 }

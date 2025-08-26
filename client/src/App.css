@@ -122,3 +122,54 @@ button:hover {
   margin-right: 10px;
   padding: 8px 16px;
 }
+
+.messenger-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: sans-serif;
+}
+
+.poruke-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+  height: 400px;
+  overflow-y: auto;
+  background: #f9f9f9;
+  margin-bottom: 10px;
+}
+
+.poruka {
+  padding: 8px 12px;
+  margin: 6px 0;
+  border-radius: 15px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.moja {
+  background-color: #c799f2;
+  align-self: flex-end;
+  margin-left: auto;
+  text-align: right;
+}
+
+.njihova {
+  background-color: #c799f2;
+  align-self: flex-start;
+  margin-right: auto;
+}
+
+.input-box {
+  display: flex;
+  gap: 10px;
+}
+
+.input-box input {
+  flex-grow: 1;
+  padding: 8px;
+}
+
+.input-box button {
+  padding: 8px 12px;
+}

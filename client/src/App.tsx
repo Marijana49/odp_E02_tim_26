@@ -24,7 +24,7 @@ function App() {
       <Route path="/korisnik/:id" element={<PorukeKorisnika />} />
       <Route path="/profil" element={<Profil usersApi={usersApi} />} />
       <Route path="/Izmjenaprofila" element={<IzmjenaProfil usersApi={usersApi} />} />
-
+      <Route path="/poruke/:korIme" element={<PorukeKorisnika />} />
 
         <Route
           path="/user-dashboard"
