@@ -17,7 +17,8 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
   const [slika, setSlika] = useState<string>("");
   const [greska, setGreska] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [, setSlikaFile] = useState<File | null>(null);
+  const [slikaFile, setSlikaFile] = useState<File | null>(null);
+  const [slikaPreview, setSlikaPreview] = useState<string>("");
 
   useEffect(() => {
     if (user?.id && token) {
@@ -50,17 +51,27 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
     }
 
     try {
+      let slikaZaSlanje = slika;
+
+    // Ako postoji data URL, skini prefix
+    if (slika.startsWith("data:image/")) {
+      const parts = slika.split(",");
+      if (parts.length === 2) {
+        slikaZaSlanje = parts[1]; // uzmi samo Base64 dio
+      }
+    }
       const noviPodaci: UserDto = {
         id: user.id,
         ime,
         prezime,
         brTelefona,
-        slika,
+        slika: slika,
         korisnickoIme: user.korisnickoIme,
         uloga: user.uloga
       };
 
       const odgovor = await usersApi.updateKorisnik(token ?? "", noviPodaci);
+      console.log(noviPodaci);
 
       if (odgovor) {
         navigate("/profil");
@@ -102,20 +113,41 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
           />
           <input
             type="file"
-            placeholder="Профилна слика"
             name="slika"
             accept="image/*"
             onChange={(e) => {
-              if(e.target.files && e.target.files.length > 0){
+              if(e.target.files?.[0]){
                 const file = e.target.files[0];
                 setSlikaFile(file);
 
-                const imageUrl = URL.createObjectURL(file);
-                setSlika(imageUrl);
+                const previewUrl = URL.createObjectURL(file);
+                setSlikaPreview(previewUrl);
+
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  const base64String = reader.result as string;
+                  setSlika(base64String);
+                };
+                reader.readAsDataURL(file);
               }
             }}
           />
-          {slika && <img src={slika} alt="Preview" style={{maxWidth: "200px", marginTop: "10px"}}/>}
+          {slikaFile ? (
+            <img
+              src={slikaPreview}
+              alt="Preview"
+              style={{ maxWidth: "200px", marginTop: "10px" }}
+            />
+          ) : slika ? (
+            <img
+              src={slika}
+              alt="Profilna slika"
+              style={{ maxWidth: "200px", marginTop: "10px" }}
+              onError={(e) => {
+                e.currentTarget.src = "/defaultProfilePicture.jpg";
+              }}
+            />
+          ) : null}
           {greska && <p>{greska}</p>}
           <br></br>
           <button type="submit" className="btn">Сачувај измјене</button>

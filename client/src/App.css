@@ -41,11 +41,12 @@ h1 {
 }
 
 .input-group {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem; 
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 2.5rem;
+  align-items: center; 
 }
 
 label {
@@ -55,11 +56,12 @@ label {
 }
 
 input {
-  width: 100%;
-  padding: 0.6rem;
+  width: 80%; 
+  padding: 0.4rem 0.6rem; 
   border-radius: 6px;
   border: 1px solid var(--border-color);
   transition: border-color 0.3s, box-shadow 0.3s;
+  margin-bottom: 10px;
 }
 
 input:focus {

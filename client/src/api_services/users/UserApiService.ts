@@ -48,4 +48,22 @@ export const usersApi: IUsersAPIService = {
       return null;
     }
   },
+
+  async uploadSlika(token: string, file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("slika", file);
+
+  const response = await fetch("/api/upload", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) throw new Error("Upload failed");
+  
+  const data = await response.json();
+  return data.url; 
+}
 };
