@@ -4,7 +4,7 @@ export class User {
     public korisnickoIme: string = '',
     public uloga: string = 'user',
     public lozinka: string = '',
-    public slika: string = '',
+    public slike: string = '',
     public brTelefona: string = '',
     public ime: string = '',
     public prezime: string = ''

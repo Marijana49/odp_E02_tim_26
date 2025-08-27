@@ -69,7 +69,6 @@ export class UserController {
 // PUT /api/v1/users/update
 private async izmijeniProfil(req: Request, res: Response): Promise<void> {
   try {
-    console.log(req.body)
     const updatedUser = await this.userService.azurirajKorisnika(req.body);
 
     if (!updatedUser) {

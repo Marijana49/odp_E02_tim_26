@@ -40,7 +40,7 @@ export function Profil({ usersApi }: ProfilProps) {
             <div style={{display: "flex", alignItems: "center", gap: "50px", marginBottom: "10px"}}>
             <p>Профилна слика:</p>
             <img
-              src={userData.slika ? userData.slika : "/defaultProfilePicture.jpg"}
+              src={userData.slike ? userData.slike : "/defaultProfilePicture.jpg"}
               alt="Профилна слика"
               onError={(e) => (e.currentTarget.src = "/defaultProfilePicture.jpg")}
               style={{ width: "60px", height: "60px", borderRadius: "50%", objectFit: "cover" }}
