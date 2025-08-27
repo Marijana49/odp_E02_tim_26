@@ -6,6 +6,7 @@ import { useAuth } from "../../../hooks/auth/UseAuthHook";
 import { ObrišiVrednostPoKljuču } from "../../../helpers/LocalStorage";
 import { Link } from "react-router-dom";
 import defaultAvatar from "../../../assets/defaultProfilePicture.jpg";
+import type { UserDto } from "../../../models/users/UserDTO";
 
 interface TabelaKorisnikaProps {
   usersApi: IUsersAPIService;
@@ -13,7 +14,8 @@ interface TabelaKorisnikaProps {
 
 export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
   const [korisnici, setKorisnici] = useState<UserBaseInfoDto[]>([]);
-  const { token, logout} = useAuth();
+  const { token, logout, user} = useAuth();
+  const [korisnik, setKorisnik] = useState<UserDto | null>();
 
    const handleLogout = () => {
     ObrišiVrednostPoKljuču("authToken");
@@ -23,8 +25,10 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
   useEffect(() => {
     (async () => {
       const data = await usersApi.getSviKorisnici(token ?? "");
+      const trenutni = await usersApi.getKorisnikById(token ?? "", user?.id ?? 0);
       const korisnici = data.filter(korisnik => korisnik.uloga === "user");
       setKorisnici(korisnici);
+      setKorisnik(trenutni);
     })();
   }, [token, usersApi]);
 
@@ -33,8 +37,8 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
       <div className="profil-ikona">
         <Link to="/profil" title="Мој профил">
           <img
-          src={defaultAvatar} 
-          alt="Profil"
+          src={(korisnik === null || korisnik?.slike == null) ? defaultAvatar : korisnik?.slike} 
+          alt="Профил"
         />
         </Link>
       </div>

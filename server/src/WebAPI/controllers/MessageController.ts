@@ -90,18 +90,17 @@ private async azurirajPoruku(req: Request, res: Response): Promise<void> {
    */
   private async posaljiPoruku(req: Request, res: Response): Promise<void> {
     try {
-    const { korIme, ulogovani, primljenaPoruka, poslataPoruka, stanje } = req.body;
+    const { korIme, primalac, tekstPoruke, stanje } = req.body;
 
-    if (!korIme || !ulogovani || !stanje) {
+    if (!korIme || !primalac || !stanje) {
       res.status(400).json({ success: false, message: "Недостају подаци за поруку." });
       return;
     }
 
     const novaPoruka = await this.messageService.posaljiPoruku({
       korIme,
-      ulogovani,
-      primljenaPoruka: primljenaPoruka || '',
-      poslataPoruka: poslataPoruka || '',
+      primalac,
+      tekstPoruke: tekstPoruke || '',
       stanje
     });
 

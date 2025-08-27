@@ -38,8 +38,8 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
       <div className="profil-ikona">
         <Link to="/profil" title="Мој профил">
           <img
-          src={korisnik === null ? defaultAvatar : korisnik?.slike} 
-          alt="Profil"
+          src={(korisnik === null || korisnik?.slike == null) ? defaultAvatar : korisnik?.slike} 
+          alt="Профил"
         />
         </Link>
       </div>
