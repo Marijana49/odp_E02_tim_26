@@ -9,7 +9,7 @@ export class MessageRepository implements IMessageRepo {
     try {
       const query = `
         INSERT INTO mess (korIme, ulogovani, primljenaPoruka, poslataPoruka, stanje) 
-        VALUES (?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?)
       `;
 
       const [result] = await db.execute<ResultSetHeader>(query, [
