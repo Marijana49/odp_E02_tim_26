@@ -90,19 +90,21 @@ private async azurirajPoruku(req: Request, res: Response): Promise<void> {
    */
   private async posaljiPoruku(req: Request, res: Response): Promise<void> {
     try {
-    const { korIme, primalac, tekstPoruke, stanje } = req.body;
+    const { korIme, ulogovani, primljenaPoruka, poslataPoruka,stanje } = req.body;
 
-    if (!korIme || !primalac || !stanje) {
+    if (!korIme || !ulogovani || !stanje) {
       res.status(400).json({ success: false, message: "Недостају подаци за поруку." });
       return;
     }
 
     const novaPoruka = await this.messageService.posaljiPoruku({
       korIme,
-      primalac,
-      tekstPoruke: tekstPoruke || '',
+      ulogovani,
+      primljenaPoruka: primljenaPoruka || '',
+      poslataPoruka: poslataPoruka || '',
       stanje
     });
+    console.log(novaPoruka);
 
     res.status(201).json(novaPoruka);
   } catch (error) {
