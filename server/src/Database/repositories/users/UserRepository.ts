@@ -91,7 +91,7 @@ export class UserRepository implements IUserRepository {
       `;
 
       const [result] = await db.execute<ResultSetHeader>(query, [
-        user.slika,
+        user.slike,
         user.brTelefona,
         user.ime,
         user.prezime,

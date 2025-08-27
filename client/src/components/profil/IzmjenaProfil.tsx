@@ -25,12 +25,12 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
       const fetchUserData = async () => {
         try {
           const data = await usersApi.getKorisnikById(token, user.id);
-          console.log(data)
+          console.log(data);
           if (data) {
             setIme(data.ime);
             setPrezime(data.prezime);
             setBrTelefona(data.brTelefona);
-            setSlika(data.slika);
+            setSlika(data.slike);
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -42,6 +42,40 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
     }
   }, [user, token, usersApi]);
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      const file = e.target.files[0];
+      setSlikaFile(file);
+
+      const previewUrl = URL.createObjectURL(file);
+      setSlikaPreview(previewUrl);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const img = new Image();
+        img.src = reader.result as string;
+
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return;
+
+          const MAX_WIDTH = 200; // max širina
+          const scaleSize = MAX_WIDTH / img.width;
+          canvas.width = MAX_WIDTH;
+          canvas.height = img.height * scaleSize;
+
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          // Kompresija u base64 JPEG (30% kvaliteta)
+          const compressedBase64 = canvas.toDataURL("image/png", 0.5);
+          setSlika(compressedBase64);
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const podnesiFormu = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -51,23 +85,14 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
     }
 
     try {
-      let slikaZaSlanje = slika;
-
-    // Ako postoji data URL, skini prefix
-    if (slika.startsWith("data:image/")) {
-      const parts = slika.split(",");
-      if (parts.length === 2) {
-        slikaZaSlanje = parts[1]; // uzmi samo Base64 dio
-      }
-    }
       const noviPodaci: UserDto = {
         id: user.id,
         ime,
         prezime,
         brTelefona,
-        slika: slika,
+        slike: slika,
         korisnickoIme: user.korisnickoIme,
-        uloga: user.uloga
+        uloga: user.uloga,
       };
 
       const odgovor = await usersApi.updateKorisnik(token ?? "", noviPodaci);
@@ -115,22 +140,7 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
             type="file"
             name="slika"
             accept="image/*"
-            onChange={(e) => {
-              if(e.target.files?.[0]){
-                const file = e.target.files[0];
-                setSlikaFile(file);
-
-                const previewUrl = URL.createObjectURL(file);
-                setSlikaPreview(previewUrl);
-
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  const base64String = reader.result as string;
-                  setSlika(base64String);
-                };
-                reader.readAsDataURL(file);
-              }
-            }}
+            onChange={handleImageChange}
           />
           {slikaFile ? (
             <img
@@ -149,9 +159,17 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
             />
           ) : null}
           {greska && <p>{greska}</p>}
-          <br></br>
-          <button type="submit" className="btn">Сачувај измјене</button>
-          <button className="btn btn-nazad">Назад на профил</button>
+          <br />
+          <button type="submit" className="btn">
+            Сачувај измјене
+          </button>
+          <button
+            type="button"
+            className="btn btn-nazad"
+            onClick={() => navigate("/profil")}
+          >
+            Назад на профил
+          </button>
         </form>
       )}
     </div>

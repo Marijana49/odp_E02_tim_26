@@ -26,7 +26,7 @@ export class UserService implements IUserService {
     postojeci.ime = dto.ime ?? postojeci.ime;
     postojeci.prezime = dto.prezime ?? postojeci.prezime;
     postojeci.brTelefona = dto.brTelefona ?? postojeci.brTelefona;
-    postojeci.slika = dto.slika ?? postojeci.slika;
+    postojeci.slike = dto.slike ?? postojeci.slike;
 
     const azuriran = await this.userRepository.update(postojeci);
 
@@ -39,7 +39,7 @@ export class UserService implements IUserService {
       ime: azuriran.ime,
       prezime: azuriran.prezime,
       brTelefona: azuriran.brTelefona,
-      slika: azuriran.slika,
+      slike: azuriran.slike,
     };
   }
 }
