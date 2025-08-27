@@ -8,7 +8,7 @@ export class MessageRepository implements IMessageRepo {
   async create(mess: Poruka): Promise<Poruka> {
     try {
       const query = `
-        INSERT INTO mess (korIme, ulogovani, primljenaPoruka, poslataPoruka, stanje) 
+        INSERT INTO messages (korisnickoIme, ulogovani, primljenePoruke, poslatePoruke, stanjePoruke) 
         VALUES (?, ?, ?, ?, ?)
       `;
 
@@ -20,12 +20,7 @@ export class MessageRepository implements IMessageRepo {
         mess.stanje
       ]);
 
-
-      if (result.insertId) {
-        return new Poruka(mess.korIme, mess.ulogovani, mess.primljenaPoruka, mess.poslataPoruka, mess.stanje);
-      }
-
-      return new Poruka();
+      return mess;
     } catch (error) {
       console.error('Error creating user:', error);
       return new Poruka();
@@ -34,7 +29,7 @@ export class MessageRepository implements IMessageRepo {
 
   async getAll(): Promise<Poruka[]> {
     try {
-      const query = `SELECT * FROM mess`;
+      const query = `SELECT * FROM messages`;
       const [rows] = await db.execute<RowDataPacket[]>(query);
 
       return rows.map(
@@ -48,8 +43,8 @@ export class MessageRepository implements IMessageRepo {
   async update(mess: Poruka): Promise<Poruka> {
     try {
       const query = `
-        UPDATE mess 
-        SET primljenaPoruka = ?, poslataPoruka = ?, stanje = ?
+        UPDATE messages 
+        SET primljenePoruke = ?, poslatePoruke = ?, stanjePoruke = ?
         WHERE korIme = ?
       `;
 
@@ -73,8 +68,8 @@ export class MessageRepository implements IMessageRepo {
   async delete(korIme: string): Promise<boolean> {
     try {
       const query = `
-        DELETE FROM mess 
-        WHERE korIme = ?
+        DELETE FROM messages 
+        WHERE korisnickoIme = ?
       `;
 
       const [result] = await db.execute<ResultSetHeader>(query, [korIme]);
@@ -89,8 +84,8 @@ export class MessageRepository implements IMessageRepo {
     try {
       const query = `
         SELECT COUNT(*) as count 
-        FROM mess 
-        WHERE korIme = ?
+        FROM messages 
+        WHERE korisnickoIme = ?
       `;
 
       const [rows] = await db.execute<RowDataPacket[]>(query, [korIme]);
@@ -104,9 +99,9 @@ export class MessageRepository implements IMessageRepo {
   async getByUsername(korIme: string): Promise<Poruka> {
     try {
       const query = `
-        SELECT korIme, ulogovani, primljenaPoruka, poslataPoruka, stanje
+        SELECT korisnickoIme, ulogovani, primljenePoruke, poslatePoruke, stanjePoruke
         FROM messages 
-        WHERE korIme = ?
+        WHERE korisnickoIme = ?
       `;
 
       const [rows] = await db.execute<RowDataPacket[]>(query, [korIme]);

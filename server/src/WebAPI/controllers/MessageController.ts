@@ -100,8 +100,8 @@ private async azurirajPoruku(req: Request, res: Response): Promise<void> {
     const novaPoruka = await this.messageService.posaljiPoruku({
       korIme,
       ulogovani,
-      primljenaPoruka: primljenaPoruka || '',
-      poslataPoruka: poslataPoruka || '',
+      primljenaPoruka: primljenaPoruka,
+      poslataPoruka: poslataPoruka,
       stanje
     });
     console.log(novaPoruka);

@@ -10,20 +10,19 @@ function PorukeKorisnika() {
   const { id } = useParams<{ id: string }>();
   const [poruke, setPoruke] = useState<Poruka[]>([]);
   const [novaPoruka, setNovaPoruka] = useState('');
-  const [kontakt, setKontakt] = useState(''); //kontakt koji komunicira sa userom
-  const { user, token } = useAuth(); //moj ulogovani user
+  const [kontakt, setKontakt] = useState(''); // kontakt koji komunicira sa userom
+  const { user, token } = useAuth(); // moj ulogovani user
 
   useEffect(() => {
     if (id && token) {
       const fetchContact = async () => {
         try {
           const data = await usersApi.getKorisnikById(token, parseInt(id));
-          console.log(data)
           if (data) {
             setKontakt(data.korisnickoIme);
           }
         } catch (error) {
-          console.error("Greska pri dobavljanju korisnika iz kontakta:", error);
+          console.error("Greška pri dobavljanju korisnika iz kontakta:", error);
         }
       }
       fetchContact();
@@ -42,6 +41,8 @@ function PorukeKorisnika() {
           (p.ulogovani === kontakt && p.korIme === user.korisnickoIme)
         );
 
+        console.log("Filtrirane poruke:", filtrirane);
+
         setPoruke(filtrirane);
       } catch (err) {
         console.error("Greška pri učitavanju poruka:", err);
@@ -53,24 +54,29 @@ function PorukeKorisnika() {
   const posaljiOvuPoruku = async () => {
     if (novaPoruka.trim() === '') return;
 
+    if (!user) {
+      console.error('Nije ulogovan korisnik.');
+      return;
+    }
+
     const nova = new Poruka(
-      kontakt,
-      user?.korisnickoIme,
-      '',
-      novaPoruka,
-      PorukaEnum.Poslato
+      kontakt,                   
+      user.korisnickoIme,        
+      '',                        
+      novaPoruka,                
+      PorukaEnum.Poslato         
     );
 
     try {
       const novaSaServera = await MessagesApi.posaljiPoruku(nova, token ?? "");
+
+      console.log("Nova poruka sa servera:", novaSaServera);
 
       setPoruke(prev => [...prev, novaSaServera]);
       setNovaPoruka('');
     } catch (error) {
       console.error('Greška pri slanju poruke:', error);
     }
-    console.log(poruke, novaPoruka);
-
   };
 
   return (
@@ -79,7 +85,7 @@ function PorukeKorisnika() {
       <div className="poruke-box">
         {poruke.map((poruka, index) => {
           const jeMoja = poruka.ulogovani === user?.korisnickoIme;
-          const tekst = jeMoja ? poruka.poslataPoruka : poruka.primljenaPoruka;
+          const tekst = poruka.poslataPoruka || poruka.primljenaPoruka || '';
 
           return (
             <div
@@ -96,9 +102,9 @@ function PorukeKorisnika() {
           type="text"
           value={novaPoruka}
           onChange={(e) => setNovaPoruka(e.target.value)}
-          placeholder="Upiši poruku..."
+          placeholder="Упиши поруку..."
         />
-        <button onClick={posaljiOvuPoruku}>Pošalji</button>
+        <button onClick={posaljiOvuPoruku}>Пошаљи</button>
       </div>
     </div>
   );
