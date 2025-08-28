@@ -9,7 +9,7 @@ import defaultAvatar from "../../../assets/defaultProfilePicture.jpg";
 import type { UserDto } from "../../../models/users/UserDTO";
 import { MessagesApi } from "../../../api_services/messages/MessageApiService";
 import { PorukaEnum } from "../../../../../server/src/Domain/enums/PorukaEnum";
-
+//treba dodati za prebrojavanje poruka
 
 interface TabelaKorisnikaProps {
   usersApi: IUsersAPIService;
@@ -47,8 +47,8 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
       if(trenutni)
       {
         const neprocitane = svePoruke.filter(p =>
-        p.ulogovani === kontaktIme &&                            // Poruku je poslao taj korisnik
-        p.korIme === trenutni.korisnickoIme &&                  // Ulogovani je primio poruku
+        p.posiljalac === kontaktIme &&                            // Poruku je poslao taj korisnik
+        p.primalac === trenutni.korisnickoIme &&                  // Ulogovani je primio poruku
         p.stanje === PorukaEnum.Poslato);                         // Poruka nije pročitana
         brojevi[admin.id] = neprocitane.length;
       }

@@ -16,11 +16,10 @@ interface TabelaKorisnikaProps {
 
 export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
   const [korisnici, setKorisnici] = useState<UserBaseInfoDto[]>([]);
-  const { token, logout, user} = useAuth();
-  const [korisnik, setKorisnik] = useState<UserDto | null>();
-  const [neprocitanePoruke, setNeprocitanePoruke] = useState<{ [korisnikId: number]: number }>({});
+  const { token, logout, user } = useAuth();
+  const [korisnik, setKorisnik] = useState<UserDto | null>(null);
 
-   const handleLogout = () => {
+  const handleLogout = () => {
     ObrišiVrednostPoKljuču("authToken");
     logout();
   };
@@ -29,27 +28,31 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
     (async () => {
       const data = await usersApi.getSviKorisnici(token ?? "");
       const trenutni = await usersApi.getKorisnikById(token ?? "", user?.id ?? 0);
-      const korisnici = data.filter(korisnik => korisnik.uloga === "user");
-      setKorisnici(korisnici);
+      const kontakti = data.filter(korisnik => korisnik.uloga === "user");
       setKorisnik(trenutni);
 
       const svePoruke = await MessagesApi.getSvePoruke(token ?? "");
 
       const brojevi: { [korisnikId: number]: number } = {};
 
-    for (const kor of korisnici) {
-      const kontaktIme = kor.korisnickoIme;
-      if(trenutni)
-      {
-        const neprocitane = svePoruke.filter(p =>
-        p.ulogovani === kontaktIme &&                            // Poruku je poslao taj korisnik
-        p.korIme === trenutni.korisnickoIme &&                  // Ulogovani je primio poruku
-        p.stanje === PorukaEnum.Poslato);                         // Poruka nije pročitana
-        brojevi[kor.id] = neprocitane.length;
+      for (const kor of kontakti) {
+        const kontaktIme = kor.korisnickoIme;
+        if (trenutni) {
+          const neprocitane = svePoruke.filter(p =>
+            p.posiljalac === kontaktIme &&
+            p.primalac === trenutni.korisnickoIme &&
+            p.stanje === PorukaEnum.Poslato
+          );
+          brojevi[kor.id] = neprocitane.length;
+        }
       }
-    }
 
-    setNeprocitanePoruke(brojevi);
+      const kontaktiSaBrojem = kontakti.map(k => ({
+        ...k,
+        brPoruka: brojevi[k.id] || 0
+      }));
+
+      setKorisnici(kontaktiSaBrojem);
     })();
   }, [token, usersApi]);
 
@@ -58,18 +61,16 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
       <div className="profil-ikona">
         <Link to="/profil" title="Мој профил">
           <img
-          src={(korisnik === null || korisnik?.slike == null) ? defaultAvatar : korisnik?.slike} 
-          alt="Профил"
-        />
+            src={(korisnik === null || korisnik?.slike == null) ? defaultAvatar : korisnik?.slike}
+            alt="Профил"
+          />
         </Link>
       </div>
-      <h2>
-        Контакти
-      </h2>
+      <h2>Контакти</h2>
       <table>
         <thead>
           <tr>
-            <th >ID</th>
+            <th>ID</th>
             <th>Корисничко име</th>
             <th>Улога</th>
             <th>Непрочитане поруке</th>
@@ -82,19 +83,14 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
             ))
           ) : (
             <tr>
-              <td colSpan={3}>
-                Нема корисника за приказ.
-              </td>
+              <td colSpan={4}>Нема корисника за приказ.</td>
             </tr>
           )}
         </tbody>
       </table>
 
-      <button
-        onClick={handleLogout}
-      >
-        Напусти контакте
-      </button>
+      <button onClick={handleLogout}>Напусти контакте</button>
     </div>
   );
 }
+

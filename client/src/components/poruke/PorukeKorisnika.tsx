@@ -41,7 +41,26 @@ function PorukeKorisnika() {
         (p.posiljalac === kontakt && p.primalac === user.korisnickoIme)
       );
 
-      setPoruke(filtrirane);
+      const neprocitane = filtrirane.filter(p => p.posiljalac === kontakt && p.primalac === user.korisnickoIme && p.stanje === PorukaEnum.Poslato);
+
+    // Pozovi update za svaku takvu poruku
+    for (const poruka of neprocitane) {
+      try {
+        const azuriranaPoruka = { ...poruka, stanje: PorukaEnum.Procitano};
+        await MessagesApi.updatePoruke(token, azuriranaPoruka);
+      } catch (err) {
+        console.error("Greška pri ažuriranju statusa poruke:", err);
+      }
+    }
+
+    const azuriranePoruke = filtrirane.map(p => {
+      if ( p.posiljalac === kontakt && p.primalac === user.korisnickoIme && p.stanje === PorukaEnum.Poslato) {
+        return { ...p, stanje: PorukaEnum.Procitano };
+      }
+      return p;
+    });
+
+      setPoruke(azuriranePoruke);
     } catch (err) {
       console.error("Greška pri učitavanju poruka:", err);
     }
@@ -50,7 +69,6 @@ function PorukeKorisnika() {
   useEffect(() => {
     fetchPoruke();
 
-    // Opcionalno: osvežavanje na svakih 5 sekundi (kao simulacija real-time chata)
     const interval = setInterval(fetchPoruke, 5000);
     return () => clearInterval(interval);
   }, [token, user, kontakt]);
@@ -74,6 +92,32 @@ function PorukeKorisnika() {
     }
   };
 
+  const brojNeprocitanihPoKontaktu = async () => {
+  if (!token || !user) return;
+
+  try {
+    const svePoruke = await MessagesApi.getSvePoruke(token);
+
+    const neprocitanePoruke = svePoruke.filter(p =>
+      p.primalac === user.korisnickoIme &&
+      p.stanje === PorukaEnum.Poslato
+    );
+
+    // Grupisanje po kontaktima
+    const brojPoKontaktu: Record<string, number> = {};
+
+    for (const poruka of neprocitanePoruke) {
+      if (!brojPoKontaktu[poruka.primalac]) {
+        brojPoKontaktu[poruka.primalac] = 1;
+      } else {
+        brojPoKontaktu[poruka.primalac]++;
+      }
+    }
+    return brojPoKontaktu;
+    } catch (err) {
+      console.error("Greška pri brojanju nepročitanih poruka:", err);
+    }
+  };
   return (
     <div className="messenger-container">
       <h2>Поруке са корисником {kontakt}</h2>
