@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Poruka } from '../../../../server/src/Domain/models/Poruka';
 import { PorukaEnum } from '../../../../server/src/Domain/enums/PorukaEnum';
@@ -12,6 +12,7 @@ function PorukeKorisnika() {
   const [novaPoruka, setNovaPoruka] = useState('');
   const [kontakt, setKontakt] = useState(''); // kontakt koji komunicira sa userom
   const { user, token } = useAuth(); // moj ulogovani user
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id && token) {
@@ -89,14 +90,19 @@ function PorukeKorisnika() {
       <div className="poruke-box">
         {poruke.map((poruka, index) => {
           const jeMoja = poruka.ulogovani === user?.korisnickoIme;
-          const tekst = poruka.poslataPoruka || poruka.primljenaPoruka || '';
+          const tekst = poruka.ulogovani === user?.korisnickoIme ? poruka.poslataPoruka : poruka.primljenaPoruka || poruka.poslataPoruka;
 
           return (
             <div
               key={index}
               className={`poruka ${jeMoja ? 'moja' : 'njihova'}`}
             >
-              {tekst}
+              <span>{tekst}</span>
+              {jeMoja && (
+                  <span style={{ marginLeft: 10, fontSize: "0.9em", color: poruka.stanje === PorukaEnum.Procitano ? 'blue' : 'gray' }}>
+                  {poruka.stanje === PorukaEnum.Procitano ? '✔✔' : '✔'}
+              </span>
+            )}
             </div>
           );
         })}
@@ -109,6 +115,7 @@ function PorukeKorisnika() {
           placeholder="Упиши поруку..."
         />
         <button onClick={posaljiOvuPoruku}>Пошаљи</button>
+        <button onClick={() => navigate(-1)} className="exit-button">Изађи</button>
       </div>
     </div>
   );
