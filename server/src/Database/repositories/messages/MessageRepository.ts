@@ -33,7 +33,13 @@ export class MessageRepository implements IMessageRepo {
       const [rows] = await db.execute<RowDataPacket[]>(query);
 
       return rows.map(
-        (row) => new Poruka(row.korIme, row.ulogovani, row.primljenaPoruka, row.poslataPoruka, row.stanje)
+        (row) => new Poruka(
+          row.korisnickoIme, 
+          row.ulogovani, 
+          row.primljenePoruke, 
+          row.poslatePoruke, 
+          (PorukaEnum as any)[row.stanjePoruke]
+        )
       );
     } catch {
       return [];
@@ -45,7 +51,7 @@ export class MessageRepository implements IMessageRepo {
       const query = `
         UPDATE messages 
         SET primljenePoruke = ?, poslatePoruke = ?, stanjePoruke = ?
-        WHERE korIme = ?
+        WHERE korisnickoIme = ?
       `;
 
       const [result] = await db.execute<ResultSetHeader>(query, [
@@ -108,7 +114,7 @@ export class MessageRepository implements IMessageRepo {
 
       if (rows.length > 0) {
         const row = rows[0];
-        return new Poruka(row.korIme, row.ulogovani, row.primljenaPoruka, row.poslataPoruka, row.stanje);
+        return new Poruka(row.korisnickoIme, row.ulogovani, row.primljenePoruke, row.poslatePoruke, row.stanjePoruke);
       }
 
       return new Poruka();

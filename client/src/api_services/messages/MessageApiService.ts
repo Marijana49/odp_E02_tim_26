@@ -15,6 +15,7 @@ export const MessagesApi: IMessageAPIService = {
       });
       return res.data;
     } catch {
+      console.log("Greška prilikom dobavčjanja poruka");
       return [];
     }
   },

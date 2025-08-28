@@ -36,14 +36,17 @@ function PorukeKorisnika() {
       try {
         const svePoruke = await MessagesApi.getSvePoruke(token);
 
+        console.log("Sve poruke sa servera:", svePoruke);
+
         const filtrirane = svePoruke.filter(p =>
           (p.ulogovani === user.korisnickoIme && p.korIme === kontakt) ||
           (p.ulogovani === kontakt && p.korIme === user.korisnickoIme)
         );
-
-        console.log("Filtrirane poruke:", filtrirane);
+        console.log(user);
+        console.log(kontakt);
 
         setPoruke(filtrirane);
+        console.log(filtrirane);
       } catch (err) {
         console.error("Greška pri učitavanju poruka:", err);
       }
@@ -67,6 +70,7 @@ function PorukeKorisnika() {
       PorukaEnum.Poslato         
     );
 
+    console.log(nova);
     try {
       const novaSaServera = await MessagesApi.posaljiPoruku(nova, token ?? "");
 
