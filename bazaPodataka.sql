@@ -15,10 +15,9 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS messages (
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    korisnickoIme VARCHAR(50) NOT NULL,
-    ulogovani varchar(50),
-    primljenePoruke VARCHAR(1000),
-    poslatePoruke VARCHAR(1000),
-    stanjePoruke VARCHAR(10),
-    FOREIGN KEY (korisnickoIme) REFERENCES users(korisnickoIme)
+    posiljalac VARCHAR(50) NOT NULL,
+    primalac varchar(50),
+    tekst VARCHAR(1000),
+    stanje VARCHAR(10),
+    FOREIGN KEY (posiljalac) REFERENCES users(korisnickoIme)
 ); 

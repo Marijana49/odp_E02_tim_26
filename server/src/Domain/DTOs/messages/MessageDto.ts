@@ -2,10 +2,9 @@ import { PorukaEnum } from "../../enums/PorukaEnum";
 
 export class MessageDto {
   public constructor(
-    public korIme: string = "",
-    public ulogovani: string = "",
-    public primljenaPoruka: string = "",
-    public poslataPoruka: string = "",
+    public posiljalac: string = "",
+    public primalac: string = "",
+    public tekst: string = "",
     public stanje: PorukaEnum = PorukaEnum.Poslato
   ) {}
 }

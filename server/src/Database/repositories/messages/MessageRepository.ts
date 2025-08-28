@@ -8,15 +8,14 @@ export class MessageRepository implements IMessageRepo {
   async create(mess: Poruka): Promise<Poruka> {
     try {
       const query = `
-        INSERT INTO messages (korisnickoIme, ulogovani, primljenePoruke, poslatePoruke, stanjePoruke) 
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO messages (posiljalac, primalac, tekst, stanje) 
+        VALUES (?, ?, ?, ?)
       `;
 
       const [result] = await db.execute<ResultSetHeader>(query, [
-        mess.korIme,
-        mess.ulogovani,
-        mess.primljenaPoruka,
-        mess.poslataPoruka,
+        mess.posiljalac,
+        mess.primalac,
+        mess.tekst,
         mess.stanje
       ]);
 
@@ -34,11 +33,10 @@ export class MessageRepository implements IMessageRepo {
 
       return rows.map(
         (row) => new Poruka(
-          row.korisnickoIme, 
-          row.ulogovani, 
-          row.primljenePoruke, 
-          row.poslatePoruke, 
-          (PorukaEnum as any)[row.stanjePoruke]
+          row.posiljalac, 
+          row.primalac, 
+          row.tekst, 
+          (PorukaEnum as any)[row.stanje]
         )
       );
     } catch {
@@ -50,15 +48,14 @@ export class MessageRepository implements IMessageRepo {
     try {
       const query = `
         UPDATE messages 
-        SET primljenePoruke = ?, poslatePoruke = ?, stanjePoruke = ?
-        WHERE korisnickoIme = ?
+        SET tekst = ?, stanje = ?
+        WHERE posiljalac = ?
       `;
 
       const [result] = await db.execute<ResultSetHeader>(query, [
-        mess.primljenaPoruka,
-        mess.poslataPoruka,
+        mess.tekst,
         mess.stanje,
-        mess.korIme
+        mess.posiljalac
       ]);
 
       if (result.affectedRows > 0) {
@@ -71,14 +68,14 @@ export class MessageRepository implements IMessageRepo {
     }
   }
 
-  async delete(korIme: string): Promise<boolean> {
+  async delete(posiljalac: string): Promise<boolean> {
     try {
       const query = `
         DELETE FROM messages 
-        WHERE korisnickoIme = ?
+        WHERE posiljalac = ?
       `;
 
-      const [result] = await db.execute<ResultSetHeader>(query, [korIme]);
+      const [result] = await db.execute<ResultSetHeader>(query, [posiljalac]);
 
       return result.affectedRows > 0;
     } catch {
@@ -86,15 +83,15 @@ export class MessageRepository implements IMessageRepo {
     }
   }
 
-  async exists(korIme: string): Promise<boolean> {
+  async exists(posiljalac: string): Promise<boolean> {
     try {
       const query = `
         SELECT COUNT(*) as count 
         FROM messages 
-        WHERE korisnickoIme = ?
+        WHERE posiljalac = ?
       `;
 
-      const [rows] = await db.execute<RowDataPacket[]>(query, [korIme]);
+      const [rows] = await db.execute<RowDataPacket[]>(query, [posiljalac]);
 
       return rows[0].count > 0;
     } catch {
@@ -102,19 +99,19 @@ export class MessageRepository implements IMessageRepo {
     }
   }
 
-  async getByUsername(korIme: string): Promise<Poruka> {
+  async getByUsername(posiljalac: string): Promise<Poruka> {
     try {
       const query = `
-        SELECT korisnickoIme, ulogovani, primljenePoruke, poslatePoruke, stanjePoruke
+        SELECT posiljalac, primalac, tekst, stanje
         FROM messages 
-        WHERE korisnickoIme = ?
+        WHERE posiljalac = ?
       `;
 
-      const [rows] = await db.execute<RowDataPacket[]>(query, [korIme]);
+      const [rows] = await db.execute<RowDataPacket[]>(query, [posiljalac]);
 
       if (rows.length > 0) {
         const row = rows[0];
-        return new Poruka(row.korisnickoIme, row.ulogovani, row.primljenePoruke, row.poslatePoruke, row.stanjePoruke);
+        return new Poruka(row.posiljalac, row.primalac, row.tekst, row.stanje);
       }
 
       return new Poruka();

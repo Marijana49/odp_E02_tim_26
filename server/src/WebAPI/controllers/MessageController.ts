@@ -23,14 +23,14 @@ export class MessageController {
 
   private async porukaByKorIme(req: Request, res: Response): Promise<void> {
   try {
-    const korIme = req.params.korIme;
+    const posiljalac = req.params.posiljalac;
 
-    if (!korIme || korIme.trim() === '') {
+    if (!posiljalac || posiljalac.trim() === '') {
       res.status(400).json({ success: false, message: "Korisničko ime nije prosleđeno." });
       return;
     }
 
-    const poruka: MessageDto | null = await this.messageService.getByKorIme(korIme);
+    const poruka: MessageDto | null = await this.messageService.getByKorIme(posiljalac);
 
     if (!poruka) {
       res.status(404).json({ success: false, message: "Message not found." });
@@ -90,18 +90,17 @@ private async azurirajPoruku(req: Request, res: Response): Promise<void> {
    */
   private async posaljiPoruku(req: Request, res: Response): Promise<void> {
     try {
-    const { korIme, ulogovani, primljenaPoruka, poslataPoruka,stanje } = req.body;
+    const { posiljalac, primalac, tekst, stanje } = req.body;
 
-    if (!korIme || !ulogovani || !stanje) {
+    if (!posiljalac || !primalac || !stanje) {
       res.status(400).json({ success: false, message: "Недостају подаци за поруку." });
       return;
     }
 
     const novaPoruka = await this.messageService.posaljiPoruku({
-      korIme,
-      ulogovani,
-      primljenaPoruka: primljenaPoruka,
-      poslataPoruka: poslataPoruka,
+      posiljalac,
+      primalac,
+      tekst: tekst,
       stanje
     });
     console.log(novaPoruka);

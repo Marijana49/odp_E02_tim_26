@@ -27,22 +27,22 @@ export interface IMessageRepo {
 
   /**
    * Briše korisnika iz baze podataka
-   * @param korIme - ID korisnika za brisanje
+   * @param posiljalac - ID korisnika za brisanje
    * @returns Promise koji vraća true ako je brisanje uspešno, false inače
    */
-  delete(korIme: string): Promise<boolean>;
+  delete(posiljalac: string): Promise<boolean>;
 
   /**
    * Proverava da li korisnik postoji u bazi podataka
-   * @param korIme - ID korisnika za proveru
+   * @param posiljalac - ID korisnika za proveru
    * @returns Promise koji vraća true ako korisnik postoji, false inače
    */
-  exists(korIme: string): Promise<boolean>;
+  exists(posiljalac: string): Promise<boolean>;
 
   /**
    * Pronalazi korisnika po korisničkom imenu
-   * @param korIme - Korisničko ime za pretragu
+   * @param posiljalac - Korisničko ime za pretragu
    * @returns Promise koji vraća korisnika ili prazan objekat ako nije pronađen
    */
-  getByUsername(korIme: string): Promise<Poruka>;
+  getByUsername(posiljalac: string): Promise<Poruka>;
 }

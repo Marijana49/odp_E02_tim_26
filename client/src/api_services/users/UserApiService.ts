@@ -25,9 +25,11 @@ export const usersApi: IUsersAPIService = {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log("Update podaci true", podaci);
       return true;
     } catch (error) {
       console.error("Error updating korisnik:", error);
+      console.log("Update podaci false", podaci);
       return false;
     }
   },

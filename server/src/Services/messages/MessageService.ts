@@ -6,58 +6,54 @@ import { IMessageService } from "../../Domain/services/messages/IMessageService"
 export class MessageService implements IMessageService {
   public constructor(private messRepo: IMessageRepo) {}
 
- async getByKorIme(korIme: string): Promise<MessageDto | null> {
-    return await this.messRepo.getByUsername(korIme);
+ async getByKorIme(posiljalac: string): Promise<MessageDto | null> {
+    return await this.messRepo.getByUsername(posiljalac);
   }
 
   async getSvePoruke(): Promise<MessageDto[]> {
     const poruke: Poruka[] = await this.messRepo.getAll();
     const porukeDTO: MessageDto[] = poruke.map(
-      (poruka) => new MessageDto(poruka.korIme, poruka.ulogovani, poruka.primljenaPoruka, poruka.poslataPoruka, poruka.stanje)
+      (poruka) => new MessageDto(poruka.posiljalac, poruka.primalac, poruka.tekst, poruka.stanje)
     );
 
     return porukeDTO;
   }
 
   async azurirajPoruke(dto: MessageDto): Promise<MessageDto | null> {
-    const postojeci = await this.messRepo.getByUsername(dto.korIme);
-    if (!postojeci.korIme) return null;
+    const postojeci = await this.messRepo.getByUsername(dto.posiljalac);
+    if (!postojeci.posiljalac) return null;
 
-    postojeci.korIme = dto.korIme ?? postojeci.korIme;
-    postojeci.ulogovani = dto.ulogovani ?? postojeci.ulogovani;
-    postojeci.primljenaPoruka = dto.primljenaPoruka ?? postojeci.primljenaPoruka;
-    postojeci.poslataPoruka = dto.poslataPoruka ?? postojeci.poslataPoruka;
+    postojeci.posiljalac = dto.posiljalac ?? postojeci.posiljalac;
+    postojeci.primalac = dto.primalac ?? postojeci.primalac;
+    postojeci.tekst = dto.tekst ?? postojeci.tekst;
     postojeci.stanje = dto.stanje ?? postojeci.stanje;
 
     const azuriran = await this.messRepo.update(postojeci);
 
-    if (!azuriran.korIme) return null;
+    if (!azuriran.posiljalac) return null;
 
     return {
-      korIme: azuriran.korIme,
-      ulogovani: azuriran.ulogovani,
-      primljenaPoruka: azuriran.primljenaPoruka,
-      poslataPoruka: azuriran.poslataPoruka,
+      posiljalac: azuriran.posiljalac,
+      primalac: azuriran.primalac,
+      tekst: azuriran.tekst,
       stanje: azuriran.stanje,
     };
   }
 
   async posaljiPoruku(dto: MessageDto): Promise<MessageDto> {
     const novaPoruka = new Poruka(
-      dto.korIme,
-      dto.ulogovani,
-      dto.primljenaPoruka ?? '',
-      dto.poslataPoruka ?? '',
+      dto.posiljalac,
+      dto.primalac,
+      dto.tekst ?? '',
       dto.stanje
     );
 
     const kreirana = await this.messRepo.create(novaPoruka);
 
     return new MessageDto(
-      kreirana.korIme,
-      kreirana.ulogovani,
-      kreirana.primljenaPoruka,
-      kreirana.poslataPoruka,
+      kreirana.posiljalac,
+      kreirana.primalac,
+      kreirana.tekst,
       kreirana.stanje
     );
   }

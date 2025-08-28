@@ -16,6 +16,7 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
   const [brTelefona, setBrTelefona] = useState<string>("");
   const [slika, setSlika] = useState<string>("");
   const [greska, setGreska] = useState<string>("");
+  const [brPoruka] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [slikaFile, setSlikaFile] = useState<File | null>(null);
   const [slikaPreview, setSlikaPreview] = useState<string>("");
@@ -93,10 +94,12 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
         slike: slika,
         korisnickoIme: user.korisnickoIme,
         uloga: user.uloga,
+        brPoruka,
       };
 
       const odgovor = await usersApi.updateKorisnik(token ?? "", noviPodaci);
       console.log(noviPodaci);
+      console.log(odgovor);
 
       if (odgovor) {
         navigate("/profil");
@@ -119,20 +122,20 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
             type="text"
             placeholder="Име"
             name="ime"
-            value={ime}
+            value={ime || ""}
             onChange={(e) => setIme(e.target.value)}
           />
           <input
             type="text"
             placeholder="Презиме"
-            value={prezime}
+            value={prezime || ""}
             name="prezime"
             onChange={(e) => setPrezime(e.target.value)}
           />
           <input
             type="text"
             placeholder="Број телефона"
-            value={brTelefona}
+            value={brTelefona || ""}
             name="brTel"
             onChange={(e) => setBrTelefona(e.target.value)}
           />
