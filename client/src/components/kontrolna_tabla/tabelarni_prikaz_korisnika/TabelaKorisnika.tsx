@@ -7,6 +7,8 @@ import { ObrišiVrednostPoKljuču } from "../../../helpers/LocalStorage";
 import { Link } from "react-router-dom";
 import defaultAvatar from "../../../assets/defaultProfilePicture.jpg";
 import type { UserDto } from "../../../models/users/UserDTO";
+import { MessagesApi } from "../../../api_services/messages/MessageApiService";
+import { PorukaEnum } from "../../../../../server/src/Domain/enums/PorukaEnum";
 
 interface TabelaKorisnikaProps {
   usersApi: IUsersAPIService;
@@ -16,6 +18,7 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
   const [korisnici, setKorisnici] = useState<UserBaseInfoDto[]>([]);
   const { token, logout, user} = useAuth();
   const [korisnik, setKorisnik] = useState<UserDto | null>();
+  const [neprocitanePoruke, setNeprocitanePoruke] = useState<{ [korisnikId: number]: number }>({});
 
    const handleLogout = () => {
     ObrišiVrednostPoKljuču("authToken");
@@ -29,6 +32,24 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
       const korisnici = data.filter(korisnik => korisnik.uloga === "user");
       setKorisnici(korisnici);
       setKorisnik(trenutni);
+
+      const svePoruke = await MessagesApi.getSvePoruke(token ?? "");
+
+      const brojevi: { [korisnikId: number]: number } = {};
+
+    for (const kor of korisnici) {
+      const kontaktIme = kor.korisnickoIme;
+      if(trenutni)
+      {
+        const neprocitane = svePoruke.filter(p =>
+        p.ulogovani === kontaktIme &&                            // Poruku je poslao taj korisnik
+        p.korIme === trenutni.korisnickoIme &&                  // Ulogovani je primio poruku
+        p.stanje === PorukaEnum.Poslato);                         // Poruka nije pročitana
+        brojevi[kor.id] = neprocitane.length;
+      }
+    }
+
+    setNeprocitanePoruke(brojevi);
     })();
   }, [token, usersApi]);
 
@@ -51,6 +72,7 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
             <th >ID</th>
             <th>Корисничко име</th>
             <th>Улога</th>
+            <th>Непрочитане поруке</th>
           </tr>
         </thead>
         <tbody>

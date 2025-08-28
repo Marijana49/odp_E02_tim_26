@@ -6,4 +6,5 @@ export interface UserDto {
     brTelefona: string;
     ime: string;
     prezime: string;
+    brPoruka: number;
 }

@@ -46,8 +46,57 @@ function PorukeKorisnika() {
         console.log(user);
         console.log(kontakt);
 
+        for (const poruka of filtrirane) {
+        const jePrimljenaOdKontakta =
+          poruka.ulogovani === kontakt && poruka.korIme === user.korisnickoIme && poruka.stanje !== PorukaEnum.Procitano;
+
+        const jePoslataOdUlogovanog =
+          poruka.ulogovani === user.korisnickoIme && poruka.korIme === kontakt && poruka.stanje !== PorukaEnum.Procitano;
+
+        if (jePrimljenaOdKontakta) {
+          try {
+            const podaci1 = {
+              korIme: poruka.korIme,
+              ulogovani: poruka.ulogovani,
+              poslataPoruka: poruka.poslataPoruka,
+              primljenaPoruka: poruka.primljenaPoruka,
+              stanje: PorukaEnum.Procitano
+            };
+
+            const uspesno1 = await MessagesApi.updatePoruke(token, podaci1);
+
+            if (uspesno1) {
+              poruka.stanje = PorukaEnum.Procitano;
+            }
+          } catch (err) {
+            console.error(`Greška pri označavanju poruke kao pročitane`, err);
+          }
+        }
+
+        if (jePoslataOdUlogovanog) {
+          try {
+            const podaci2 = {
+              korIme: poruka.korIme,
+              ulogovani: poruka.ulogovani,
+              poslataPoruka: poruka.poslataPoruka,
+              primljenaPoruka: poruka.primljenaPoruka,
+              stanje: PorukaEnum.Procitano
+            };
+
+            const uspesno2 = await MessagesApi.updatePoruke(token, podaci2);
+
+            if (uspesno2) {
+              poruka.stanje = PorukaEnum.Procitano;
+            }
+          } catch (err) {
+            console.error(`Greška pri označavanju poruke kao pročitane`, err);
+          }
+        }
+      }
+
         setPoruke(filtrirane);
         console.log(filtrirane);
+        
       } catch (err) {
         console.error("Greška pri učitavanju poruka:", err);
       }
@@ -97,12 +146,12 @@ function PorukeKorisnika() {
               key={index}
               className={`poruka ${jeMoja ? 'moja' : 'njihova'}`}
             >
-              <span>{tekst}</span>
-              {jeMoja && (
-                  <span style={{ marginLeft: 10, fontSize: "0.9em", color: poruka.stanje === PorukaEnum.Procitano ? 'blue' : 'gray' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>{tekst}</span>
+                <span style={{ fontSize: "0.9em", color: poruka.stanje === PorukaEnum.Procitano ? 'rgba(69, 105, 213, 1)' : 'gray' }}>
                   {poruka.stanje === PorukaEnum.Procitano ? '✔✔' : '✔'}
-              </span>
-            )}
+                </span>
+              </div>
             </div>
           );
         })}

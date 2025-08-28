@@ -7,6 +7,8 @@ import { ObrišiVrednostPoKljuču } from "../../../helpers/LocalStorage";
 import { Link } from "react-router-dom";
 import defaultAvatar from "../../../assets/defaultProfilePicture.jpg";
 import type { UserDto } from "../../../models/users/UserDTO";
+import { MessagesApi } from "../../../api_services/messages/MessageApiService";
+import { PorukaEnum } from "../../../../../server/src/Domain/enums/PorukaEnum";
 
 
 interface TabelaKorisnikaProps {
@@ -17,6 +19,8 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
   const [korisnici, setKorisnici] = useState<UserBaseInfoDto[]>([]);
   const [korisnik, setKorisnik] = useState<UserDto | null>();
   const { token, logout, user } = useAuth();
+  const [neprocitanePoruke, setNeprocitanePoruke] = useState<{ [korisnikId: number]: number }>({});
+
 
    const handleLogout = () => {
     ObrišiVrednostPoKljuču("authToken");
@@ -28,8 +32,29 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
       const data = await usersApi.getSviKorisnici(token ?? "");
       const trenutni = await usersApi.getKorisnikById(token ?? "", user?.id ?? 0);
       const admini = data.filter(korisnik => korisnik.uloga === "admin");
+      /*const adminiSaBrojemPoruka = admini.map(admin => ({...admin, brPoruka: brojevi[admin.id] ?? 0}));
+      setKorisnici(adminiSaBrojemPoruka);*/
       setKorisnici(admini);
       setKorisnik(trenutni);
+
+      const svePoruke = await MessagesApi.getSvePoruke(token ?? "");
+
+    // Kreiraj mapu nepročitanih poruka po ID-u korisnika
+    const brojevi: { [korisnikId: number]: number } = {};
+
+    for (const admin of admini) {
+      const kontaktIme = admin.korisnickoIme;
+      if(trenutni)
+      {
+        const neprocitane = svePoruke.filter(p =>
+        p.ulogovani === kontaktIme &&                            // Poruku je poslao taj korisnik
+        p.korIme === trenutni.korisnickoIme &&                  // Ulogovani je primio poruku
+        p.stanje === PorukaEnum.Poslato);                         // Poruka nije pročitana
+        brojevi[admin.id] = neprocitane.length;
+      }
+    }
+
+    setNeprocitanePoruke(brojevi);
     })();
   }, [token, user?.id, usersApi]);
 
@@ -52,6 +77,7 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
             <th >ID</th>
             <th>Корисничко име</th>
             <th>Улога</th>
+            <th>Непрочитане поруке</th>
           </tr>
         </thead>
         <tbody>

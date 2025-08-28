@@ -18,6 +18,7 @@ export function RedUTabeliKorisnika({ korisnik }: RedUTabeliKorisnikaProps) {
         </Link>
       </td>
       <td>{korisnik.uloga}</td>
+      <td>{korisnik.brPoruka}</td>
     </tr>
   );
 }
