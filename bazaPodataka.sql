@@ -18,6 +18,6 @@ CREATE TABLE IF NOT EXISTS messages (
     posiljalac VARCHAR(50) NOT NULL,
     primalac varchar(50),
     tekst VARCHAR(1000),
-    stanje VARCHAR(10),
+    stanje INT DEFAULT 1,
     FOREIGN KEY (posiljalac) REFERENCES users(korisnickoIme)
 ); 

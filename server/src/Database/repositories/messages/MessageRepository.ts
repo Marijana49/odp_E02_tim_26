@@ -36,7 +36,7 @@ export class MessageRepository implements IMessageRepo {
           row.posiljalac, 
           row.primalac, 
           row.tekst, 
-          (PorukaEnum as any)[row.stanje]
+          row.stanje
         )
       );
     } catch {

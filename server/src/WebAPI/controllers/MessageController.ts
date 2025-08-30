@@ -51,7 +51,8 @@ export class MessageController {
     try {
       const porukePodaci: MessageDto[] =
         await this.messageService.getSvePoruke();
-         console.log("Poruke iz baze:", porukePodaci);
+        
+        console.log("Poruke iz baze:", porukePodaci[0]);
 
       res.status(200).json(porukePodaci);
       return;

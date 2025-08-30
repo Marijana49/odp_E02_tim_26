@@ -14,6 +14,7 @@ import { usersApi } from "./api_services/users/UserApiService";
 import PorukeKorisnika from './components/poruke/PorukeKorisnika';
 import { Profil } from "./components/profil/Profil";
 import { IzmjenaProfil } from "./components/profil/IzmjenaProfil";
+import "./App.css"
 
 function App() {
   return (

@@ -5,6 +5,6 @@ export class Poruka {
     public posiljalac: string = '',
     public primalac: string = '',
     public tekst: string = '',
-    public stanje: PorukaEnum = PorukaEnum.Poslato,
+    public stanje: number = 0,
   ) {}
 }

@@ -3,9 +3,10 @@ import type { UserBaseInfoDto } from "../../../models/users/UserBaseInfoDTO";
 
 interface RedUTabeliKorisnikaProps {
   korisnik: UserBaseInfoDto;
+  neprocitane: number;
 }
 
-export function RedUTabeliKorisnika({ korisnik }: RedUTabeliKorisnikaProps) {
+export function RedUTabeliKorisnika({ korisnik, neprocitane }: RedUTabeliKorisnikaProps) {
   return (
     <tr>
       <td>{korisnik.id}</td>
@@ -18,7 +19,7 @@ export function RedUTabeliKorisnika({ korisnik }: RedUTabeliKorisnikaProps) {
         </Link>
       </td>
       <td>{korisnik.uloga}</td>
-      <td>{korisnik.brPoruka}</td>
+      <td>{neprocitane}</td>
     </tr>
   );
 }
