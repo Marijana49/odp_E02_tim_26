@@ -33,6 +33,7 @@ export class MessageRepository implements IMessageRepo {
 
       return rows.map(
         (row) => new Poruka(
+          row.id,
           row.posiljalac, 
           row.primalac, 
           row.tekst, 
@@ -48,12 +49,11 @@ export class MessageRepository implements IMessageRepo {
     try {
       const query = `
         UPDATE messages 
-        SET tekst = ?, stanje = ?
+        SET stanje = ?
         WHERE posiljalac = ?
       `;
 
       const [result] = await db.execute<ResultSetHeader>(query, [
-        mess.tekst,
         mess.stanje,
         mess.posiljalac
       ]);
@@ -65,6 +65,22 @@ export class MessageRepository implements IMessageRepo {
        return new Poruka();
     } catch {
        return new Poruka();
+    }
+  }
+  
+  async getById(id: number): Promise<Poruka> {
+    try {
+      const query = `SELECT *FROM messages WHERE id = ?`;
+      const [rows] = await db.execute<RowDataPacket[]>(query, [id]);
+      console.log(rows)
+      if (rows.length > 0) {
+        const row = rows[0];
+        return new Poruka(row.id, row.posiljalac, row.primalac, row.tekst, row.stanje);
+      }
+
+      return new Poruka();
+    } catch {
+      return new Poruka();
     }
   }
 

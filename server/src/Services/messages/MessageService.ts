@@ -13,19 +13,16 @@ export class MessageService implements IMessageService {
   async getSvePoruke(): Promise<MessageDto[]> {
     const poruke: Poruka[] = await this.messRepo.getAll();
     const porukeDTO: MessageDto[] = poruke.map(
-      (poruka) => new MessageDto(poruka.posiljalac, poruka.primalac, poruka.tekst, poruka.stanje)
+      (poruka) => new MessageDto(poruka.id, poruka.posiljalac, poruka.primalac, poruka.tekst, poruka.stanje)
     );
 
     return porukeDTO;
   }
 
   async azurirajPoruke(dto: MessageDto): Promise<MessageDto | null> {
-    const postojeci = await this.messRepo.getByUsername(dto.posiljalac);
+    const postojeci = await this.messRepo.getById(dto.id);
     if (!postojeci.posiljalac) return null;
-
-    postojeci.posiljalac = dto.posiljalac ?? postojeci.posiljalac;
-    postojeci.primalac = dto.primalac ?? postojeci.primalac;
-    postojeci.tekst = dto.tekst ?? postojeci.tekst;
+    
     postojeci.stanje = dto.stanje ?? postojeci.stanje;
 
     const azuriran = await this.messRepo.update(postojeci);
@@ -33,6 +30,7 @@ export class MessageService implements IMessageService {
     if (!azuriran.posiljalac) return null;
 
     return {
+      id: azuriran.id,
       posiljalac: azuriran.posiljalac,
       primalac: azuriran.primalac,
       tekst: azuriran.tekst,
@@ -42,6 +40,7 @@ export class MessageService implements IMessageService {
 
   async posaljiPoruku(dto: MessageDto): Promise<MessageDto> {
     const novaPoruka = new Poruka(
+      dto.id,
       dto.posiljalac,
       dto.primalac,
       dto.tekst ?? '',
@@ -51,6 +50,7 @@ export class MessageService implements IMessageService {
     const kreirana = await this.messRepo.create(novaPoruka);
 
     return new MessageDto(
+      kreirana.id,
       kreirana.posiljalac,
       kreirana.primalac,
       kreirana.tekst,

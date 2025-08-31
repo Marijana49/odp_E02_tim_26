@@ -18,6 +18,13 @@ export interface IMessageRepo {
    */
   getAll(): Promise<Poruka[]>;
 
+    /**
+     * Pronalazi korisnika po ID-u
+     * @param id - Jedinstveni identifikator korisnika
+     * @returns Vraća korisnika ili prazan objekat ako nije pronađen
+     */
+    getById(id: number): Promise<Poruka>;
+
   /**
    * Ažurira postojećeg korisnika
    * @param mess - Objekat korisnika sa ažuriranim podacima

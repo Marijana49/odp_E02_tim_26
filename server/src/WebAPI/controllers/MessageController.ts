@@ -91,7 +91,7 @@ private async azurirajPoruku(req: Request, res: Response): Promise<void> {
    */
   private async posaljiPoruku(req: Request, res: Response): Promise<void> {
     try {
-    const { posiljalac, primalac, tekst, stanje } = req.body;
+    const {id, posiljalac, primalac, tekst, stanje } = req.body;
 
     if (!posiljalac || !primalac || !stanje) {
       res.status(400).json({ success: false, message: "Недостају подаци за поруку." });
@@ -99,6 +99,7 @@ private async azurirajPoruku(req: Request, res: Response): Promise<void> {
     }
 
     const novaPoruka = await this.messageService.posaljiPoruku({
+      id,
       posiljalac,
       primalac,
       tekst: tekst,

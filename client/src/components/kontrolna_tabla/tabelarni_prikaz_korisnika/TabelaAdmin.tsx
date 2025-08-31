@@ -56,16 +56,16 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
   useEffect(() => {
     fetchData(); // odmah pozovi na mount
 
-    const interval = setInterval(() => {
+   /* const interval = setInterval(() => {
       fetchData();
-    }, 5000); // svakih 5 sekundi
+    }, 5000); // svakih 5 sekundi*/
 
-    return () => clearInterval(interval); // očisti interval kada se unmount-uje
+   // return () => clearInterval(interval); // očisti interval kada se unmount-uje
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, user?.id, usersApi]);
 
   return (
-    <div className="admin-container">
+    <div className="kor-container">
       {/* Header */}
       <div className="header-bar">
         <h2>Здраво, {korisnik?.korisnickoIme}</h2>
@@ -83,7 +83,7 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
 
       {/* Kontakti */}
       <h3>Контакти</h3>
-      <table className="admin-table">
+      <table className="kor-table">
         <thead>
           <tr>
             <th>ID</th>

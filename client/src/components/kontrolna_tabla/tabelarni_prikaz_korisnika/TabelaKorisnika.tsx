@@ -3,12 +3,10 @@ import type { IUsersAPIService } from "../../../api_services/users/IUserApiServi
 import type { UserBaseInfoDto } from "../../../models/users/UserBaseInfoDTO";
 import { RedUTabeliKorisnika } from "./RedUTabeliKorisnika";
 import { useAuth } from "../../../hooks/auth/UseAuthHook";
-import { ObrišiVrednostPoKljuču } from "../../../helpers/LocalStorage";
 import { Link } from "react-router-dom";
 import defaultAvatar from "../../../assets/defaultProfilePicture.jpg";
 import type { UserDto } from "../../../models/users/UserDTO";
 import { MessagesApi } from "../../../api_services/messages/MessageApiService";
-import { PorukaEnum } from "../../../../../server/src/Domain/enums/PorukaEnum";
 
 interface TabelaKorisnikaProps {
   usersApi: IUsersAPIService;
@@ -16,58 +14,76 @@ interface TabelaKorisnikaProps {
 
 export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
   const [korisnici, setKorisnici] = useState<UserBaseInfoDto[]>([]);
+  const [korisnik, setKorisnik] = useState<UserDto | null>();
   const { token, logout, user } = useAuth();
-  const [korisnik, setKorisnik] = useState<UserDto | null>(null);
+  const [neprocitanePoruke, setNeprocitanePoruke] = useState<{
+    [korisnikId: number]: number;
+  }>({});
 
   const handleLogout = () => {
-    ObrišiVrednostPoKljuču("authToken");
     logout();
   };
 
-  useEffect(() => {
-    (async () => {
-      const data = await usersApi.getSviKorisnici(token ?? "");
-      const trenutni = await usersApi.getKorisnikById(token ?? "", user?.id ?? 0);
-      const kontakti = data.filter(korisnik => korisnik.uloga === "user");
-      setKorisnik(trenutni);
+    // funkcija koja osvežava korisnike i poruke
+  const fetchData = async () => {
+    if (!token || !user?.id) return;
 
-      const svePoruke = await MessagesApi.getSvePoruke(token ?? "");
+    const data = await usersApi.getSviKorisnici(token);
+    const trenutni = await usersApi.getKorisnikById(token, user.id);
+    const useri = data.filter((korisnik) => korisnik.uloga === "user");
 
-      const brojevi: { [korisnikId: number]: number } = {};
+    setKorisnici(useri);
+    setKorisnik(trenutni);
 
-      for (const kor of kontakti) {
-        const kontaktIme = kor.korisnickoIme;
-        if (trenutni) {
-          const neprocitane = svePoruke.filter(p =>
+    const svePoruke = await MessagesApi.getSvePoruke(token);
+
+    const brojevi: { [korisnikId: number]: number } = {};
+    for (const u of useri) {
+      const kontaktIme = u.korisnickoIme;
+      if (trenutni) {
+        const neprocitane = svePoruke.filter(
+          (p) =>
             p.posiljalac === kontaktIme &&
             p.primalac === trenutni.korisnickoIme &&
-            p.stanje === PorukaEnum.Poslato
-          );
-          brojevi[kor.id] = neprocitane.length;
-        }
+            p.stanje === 1
+        );
+        brojevi[u.id] = neprocitane.length;
       }
+    }
+    setNeprocitanePoruke(brojevi);
+  };
 
-      const kontaktiSaBrojem = kontakti.map(k => ({
-        ...k,
-        brPoruka: brojevi[k.id] || 0
-      }));
+  useEffect(() => {
+    fetchData(); // odmah pozovi na mount
 
-      setKorisnici(kontaktiSaBrojem);
-    })();
-  }, [token, usersApi]);
+   /* const interval = setInterval(() => {
+      fetchData();
+    }, 5000); // svakih 5 sekundi*/
+
+   // return () => clearInterval(interval); // očisti interval kada se unmount-uje
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, user?.id, usersApi]);
 
   return (
-    <div>
-      <div className="profil-ikona">
+     <div className="kor-container">
+      {/* Header */}
+      <div className="header-bar">
+        <h2>Здраво, {korisnik?.korisnickoIme}</h2>
         <Link to="/profil" title="Мој профил">
           <img
-            src={(korisnik === null || korisnik?.slike == null) ? defaultAvatar : korisnik?.slike}
+            src={
+              korisnik === null || korisnik?.slike == null
+                ? defaultAvatar
+                : korisnik?.slike
+            }
             alt="Профил"
           />
         </Link>
       </div>
-      <h2>Контакти</h2>
-      <table>
+
+      {/* Kontakti */}
+      <h3>Контакти</h3>
+      <table className="kor-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -79,7 +95,11 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
         <tbody>
           {korisnici.length > 0 ? (
             korisnici.map((korisnik) => (
-              <RedUTabeliKorisnika key={korisnik.id} korisnik={korisnik} />
+              <RedUTabeliKorisnika
+                key={korisnik.id}
+                korisnik={korisnik}
+                neprocitane={neprocitanePoruke[korisnik.id]}
+              />
             ))
           ) : (
             <tr>
@@ -89,7 +109,10 @@ export function TabelaKorisnika({ usersApi }: TabelaKorisnikaProps) {
         </tbody>
       </table>
 
-      <button onClick={handleLogout}>Напусти контакте</button>
+      {/* Logout dugme */}
+      <button onClick={handleLogout} className="logout-btn">
+        Напусти контакте
+      </button>
     </div>
   );
 }
