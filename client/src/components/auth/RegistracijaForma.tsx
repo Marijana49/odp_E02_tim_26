@@ -31,9 +31,10 @@ export function RegistracijaForma({ authApi }: AuthFormProps) {
   };
 
   return (
-    <div>
-      <h1>Регистрација</h1>
-      <form onSubmit={podnesiFormu}>
+    <div className="form-container">
+    <h1>Регистрација</h1>
+    <form onSubmit={podnesiFormu}>
+      <div className="input-group">
         <input
           type="text"
           placeholder="Корисничко име"
@@ -54,17 +55,11 @@ export function RegistracijaForma({ authApi }: AuthFormProps) {
           <option value="admin">Admin</option>
         </select>
         {greska && <p>{greska}</p>}
-        <button
-          type="submit"
-        >
-          Региструј се
-        </button>
+        <button type="submit">Региструј се</button>
+      </div>
       </form>
       <p>
-        Већ имате налог?{" "}
-        <Link to="/login">
-          Пријавите се
-        </Link>
+        Већ имате налог? <Link to="/login">Пријавите се</Link>
       </p>
     </div>
   );

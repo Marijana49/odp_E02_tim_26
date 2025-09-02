@@ -24,7 +24,6 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
     logout();
   };
 
-  // funkcija koja osvežava korisnike i poruke
   const fetchData = async () => {
     if (!token || !user?.id) return;
 
@@ -54,19 +53,17 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
   };
 
   useEffect(() => {
-    fetchData(); // odmah pozovi na mount
+    fetchData();
 
-   /* const interval = setInterval(() => {
+   const interval = setInterval(() => {
       fetchData();
-    }, 5000); // svakih 5 sekundi*/
+    }, 5000);
 
-   // return () => clearInterval(interval); // očisti interval kada se unmount-uje
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   return () => clearInterval(interval); 
   }, [token, user?.id, usersApi]);
 
   return (
     <div className="kor-container">
-      {/* Header */}
       <div className="header-bar">
         <h2>Здраво, {korisnik?.korisnickoIme}</h2>
         <Link to="/profil" title="Мој профил">
@@ -81,7 +78,6 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
         </Link>
       </div>
 
-      {/* Kontakti */}
       <h3>Контакти</h3>
       <table className="kor-table">
         <thead>
@@ -109,7 +105,6 @@ export function TabelaAdmin({ usersApi }: TabelaKorisnikaProps) {
         </tbody>
       </table>
 
-      {/* Logout dugme */}
       <button onClick={handleLogout} className="logout-btn">
         Напусти контакте
       </button>

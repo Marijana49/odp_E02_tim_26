@@ -16,17 +16,16 @@ export class AuthService implements IAuthService {
       return new UserAuthDataDto(user.id, user.korisnickoIme, user.uloga);
     }
 
-    return new UserAuthDataDto(); // Neispravno korisničko ime ili lozinka
+    return new UserAuthDataDto(); 
   }
 
   async registracija(korisnickoIme: string, uloga: string, lozinka: string): Promise<UserAuthDataDto> {
     const existingUser = await this.userRepository.getByUsername(korisnickoIme);
     
     if (existingUser.id !== 0) {
-      return new UserAuthDataDto(); // Korisnik već postoji
+      return new UserAuthDataDto(); 
     }
 
-    // Hash-ujemo lozinku pre čuvanja
     const hashedPassword = await bcrypt.hash(lozinka, this.saltRounds);
 
     const newUser = await this.userRepository.create(
@@ -37,6 +36,6 @@ export class AuthService implements IAuthService {
       return new UserAuthDataDto(newUser.id, newUser.korisnickoIme, newUser.uloga);
     }
 
-    return new UserAuthDataDto(); // Registracija nije uspela
+    return new UserAuthDataDto(); 
   }
 }

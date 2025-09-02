@@ -22,17 +22,17 @@ body {
   align-items: center;
 }
 
-h1 {
+h1, h2 {
   font-size: 2.4em;
   line-height: 1.1;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   text-align: center;
   color: var(--white);
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .form-container {
-  background-color: var(--white);
+  background-color: #ece5f3;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
@@ -41,13 +41,21 @@ h1 {
 }
 
 .input-group {
-  margin-bottom: 2.5rem; 
-  margin-top: 2rem;
+  margin-bottom: 1rem; 
+  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 1rem;
   align-items: center; 
 }
+
+.btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 
 label {
   margin-bottom: 0.5rem;
@@ -120,6 +128,13 @@ button:hover {
   border-color: #3b8de4;
 }
 
+.profile-image-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 1rem;
+}
+
 .btn {
   margin-right: 10px;
   padding: 8px 16px;
@@ -178,7 +193,7 @@ button:hover {
 
 /* KONTEJNER ZA TABELU */
 .kor-container {
-  background: var(--white);
+  background: #ece5f3;
   padding: 1.5rem 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
@@ -200,7 +215,7 @@ button:hover {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
-  background: #fff;
+  background: #ece5f3;
   border-radius: 10px;
   overflow: hidden;
 }
@@ -230,6 +245,25 @@ button:hover {
   color: #777;
 }
 
+.kor-table td.neprocitane {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.badge {
+  display: inline-block;
+  background-color: #a788d9;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+
 /* LOGOUT DUGME */
 .logout-btn {
   display: inline-block;
@@ -237,7 +271,7 @@ button:hover {
   padding: 10px 18px;
   border-radius: 8px;
   border: none;
-  background: #22228b;
+  background: #30307d;
   color: #fff;
   font-size: 1rem;
   cursor: pointer;
@@ -275,3 +309,26 @@ button:hover {
 .header-bar img:hover {
   border-color: #3b8de4;
 }
+
+select {
+  width: 80%;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: #fff;
+  color: var(--text-dark);
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
+}
+
+select:focus {
+  border-color: var(--focus-color);
+  box-shadow: 0 0 5px var(--focus-color);
+  outline: none;
+}
+

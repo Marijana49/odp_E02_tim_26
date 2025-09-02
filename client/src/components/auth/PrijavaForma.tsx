@@ -30,9 +30,10 @@ export function PrijavaForma({ authApi }: AuthFormProps) {
   };
 
   return (
-    <div>
-      <h1>Пријава</h1>
-      <form onSubmit={podnesiFormu}>
+    <div className="form-container">
+    <h1>Пријава</h1>
+    <form onSubmit={podnesiFormu}>
+      <div className="input-group">
         <input
           type="text"
           placeholder="Корисничко име"
@@ -45,19 +46,16 @@ export function PrijavaForma({ authApi }: AuthFormProps) {
           value={lozinka}
           onChange={(e) => setLozinka(e.target.value)}
         />
-        {greska && <p>{greska}</p>}
-        <button
-          type="submit"
-        >
-          Пријави се
-        </button>
-      </form>
-      <p>
-        Немате налог?{" "}
-        <Link to="/register">
-          Региструјте се
-        </Link>
-      </p>
+        {greska && <p style={{ color: 'red' }}>{greska}</p>}
+        <button type="submit">Пријави се</button>
+      </div>
+    </form>
+    <p>
+      Немате налог?{" "}
+      <Link to="/register">
+        Региструјте се
+      </Link>
+    </p>
     </div>
   );
 }

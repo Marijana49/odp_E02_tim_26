@@ -1,8 +1,6 @@
 import { Request, Response, Router } from "express";
 import { IMessageService } from "../../Domain/services/messages/IMessageService";
 import { MessageDto } from "../../Domain/DTOs/messages/MessageDto";
-import { authenticate } from "../../Middlewares/authentification/AuthMiddleware";
-import { authorize } from "../../Middlewares/authorization/AuthorizeMiddleware";
 
 export class MessageController {
   private router: Router;
@@ -45,7 +43,6 @@ export class MessageController {
 
   /**
    * GET /api/v1/messages
-   * Svi korisnici
    */
   private async poruke(req: Request, res: Response): Promise<void> {
     try {
@@ -87,7 +84,6 @@ private async azurirajPoruku(req: Request, res: Response): Promise<void> {
 
 /**
    * POST /api/v1/auth/register
-   * Registracija novog korisnika
    */
   private async posaljiPoruku(req: Request, res: Response): Promise<void> {
     try {

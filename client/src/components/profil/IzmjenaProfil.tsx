@@ -112,12 +112,13 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
   };
 
   return (
-    <div>
+    <div className="form-container">
       <h1>Измјена профила</h1>
       {loading ? (
         <p>Loading...</p>
       ) : (
         <form onSubmit={podnesiFormu}>
+        <div className="input-group">
           <input
             type="text"
             placeholder="Име"
@@ -163,6 +164,7 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
           ) : null}
           {greska && <p>{greska}</p>}
           <br />
+          <div className="btn-group">
           <button type="submit" className="btn">
             Сачувај измјене
           </button>
@@ -173,6 +175,8 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
           >
             Назад на профил
           </button>
+          </div>
+        </div>
         </form>
       )}
     </div>

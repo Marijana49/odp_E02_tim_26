@@ -30,26 +30,18 @@ function PorukeKorisnika() {
     }
   }, [id, token]);
 
-  // Dohvatanje svih poruka između usera i kontakta
   const fetchPoruke = async () => {
     if (!token || !user || !kontakt) return;
 
-    console.log("Debug pocinjem...");
     try {
       const svePoruke = await MessagesApi.getSvePoruke(token);
-      console.log(svePoruke);
       const filtrirane = svePoruke.filter(p =>
         (p.posiljalac === user.korisnickoIme && p.primalac === kontakt) ||
         (p.posiljalac === kontakt && p.primalac === user.korisnickoIme)
       );
-      console.log(filtrirane);
-      console.log("Prvi");
       const neprocitane = filtrirane.filter(p => p.posiljalac === kontakt && p.primalac === user.korisnickoIme && p.stanje === PorukaEnum.Poslato);
-      console.log("Drugi");
-      console.log(neprocitane);
-    // Pozovi update za svaku takvu poruku
+
     for (const poruka of neprocitane) {
-      console.log("Treci");
       try {
         const azuriranaPoruka = { ...poruka, stanje: PorukaEnum.Procitano};
         console.log("Ažuriram poruku:", azuriranaPoruka);
@@ -57,27 +49,11 @@ function PorukeKorisnika() {
       } catch (err) {
         console.error("Greška pri ažuriranju statusa poruke:", err);
       }
-      console.log("Cetvrti");
     }
-    console.log("Peti");
-    /*const azuriranePoruke = filtrirane.map(p => {
-      if ( p.posiljalac === kontakt && p.primalac === user.korisnickoIme && p.stanje === PorukaEnum.Poslato) {
-        return { ...p, stanje: PorukaEnum.Procitano };
-      }
-      console.log("Sesti");
-      return p;
-    });*/
 
-    const azuriranePoruke = filtrirane.map(p => {
-      //if ( p.posiljalac === kontakt && p.primalac === user.korisnickoIme && p.stanje === PorukaEnum.Poslato) {
-        //return { ...p, stanje: PorukaEnum.Procitano };
-      //}
-      console.log("Sesti");
-      return p;
-    });
+    const azuriranePoruke = filtrirane.map(p => { return p;});
 
     setPoruke(azuriranePoruke);
-    console.log("Sedmi");
     } catch (err) {
       console.error("Greška pri učitavanju poruka:", err);
     }
@@ -86,8 +62,8 @@ function PorukeKorisnika() {
   useEffect(() => {
     fetchPoruke();
 
-    //const interval = setInterval(fetchPoruke, 5000);
-    //return () => clearInterval(interval);
+    const interval = setInterval(fetchPoruke, 5000);
+    return () => clearInterval(interval);
   }, [token, user, kontakt]);
 
   const posaljiOvuPoruku = async () => {
@@ -104,38 +80,12 @@ function PorukeKorisnika() {
     try {
       await MessagesApi.posaljiPoruku(nova, token ?? "");
       setNovaPoruka('');
-      await fetchPoruke(); // Osveži odmah
+      await fetchPoruke();
     } catch (error) {
       console.error('Greška pri slanju poruke:', error);
     }
   };
-
-  const brojNeprocitanihPoKontaktu = async () => {
-  if (!token || !user) return;
-
-  try {
-    const svePoruke = await MessagesApi.getSvePoruke(token);
-
-    const neprocitanePoruke = svePoruke.filter(p =>
-      p.primalac === user.korisnickoIme &&
-      p.stanje === PorukaEnum.Poslato
-    );
-
-    // Grupisanje po kontaktima
-    const brojPoKontaktu: Record<string, number> = {};
-
-    for (const poruka of neprocitanePoruke) {
-      if (!brojPoKontaktu[poruka.primalac]) {
-        brojPoKontaktu[poruka.primalac] = 1;
-      } else {
-        brojPoKontaktu[poruka.primalac]++;
-      }
-    }
-    return brojPoKontaktu;
-    } catch (err) {
-      console.error("Greška pri brojanju nepročitanih poruka:", err);
-    }
-  };
+  
   return (
     <div className="messenger-container">
       <h2>Поруке са корисником {kontakt}</h2>

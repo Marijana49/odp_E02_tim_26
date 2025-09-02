@@ -19,11 +19,9 @@ export class UserRepository implements IUserRepository {
 
 
       if (result.insertId) {
-        // Vraćamo novog korisnika sa dodeljenim ID-om
         return new User(result.insertId, user.korisnickoIme, user.uloga, user.lozinka);
       }
 
-      // Vraćamo prazan objekat ako kreiranje nije uspešno
       return new User();
     } catch (error) {
       console.error('Error creating user:', error);

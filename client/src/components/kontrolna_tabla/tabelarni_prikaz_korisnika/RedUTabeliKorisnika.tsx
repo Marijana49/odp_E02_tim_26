@@ -19,7 +19,7 @@ export function RedUTabeliKorisnika({ korisnik, neprocitane }: RedUTabeliKorisni
         </Link>
       </td>
       <td>{korisnik.uloga}</td>
-      <td>{neprocitane}</td>
+      <td className="neprocitane">{neprocitane > 0 ? <span className="badge">{neprocitane}</span> : '-'}</td>
     </tr>
   );
 }
