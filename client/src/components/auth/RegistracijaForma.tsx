@@ -58,7 +58,7 @@ export function RegistracijaForma({ authApi }: AuthFormProps) {
         <button type="submit">Региструј се</button>
       </div>
       </form>
-      <p>
+      <p className="center-text">
         Већ имате налог? <Link to="/login">Пријавите се</Link>
       </p>
     </div>

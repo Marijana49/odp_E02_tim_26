@@ -332,3 +332,6 @@ select:focus {
   outline: none;
 }
 
+.center-text {
+  text-align: center;
+}

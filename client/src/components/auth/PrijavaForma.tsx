@@ -50,7 +50,7 @@ export function PrijavaForma({ authApi }: AuthFormProps) {
         <button type="submit">Пријави се</button>
       </div>
     </form>
-    <p>
+    <p className="center-text">
       Немате налог?{" "}
       <Link to="/register">
         Региструјте се
