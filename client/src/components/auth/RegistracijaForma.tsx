@@ -54,7 +54,7 @@ export function RegistracijaForma({ authApi }: AuthFormProps) {
           <option value="user">User</option>
           <option value="admin">Admin</option>
         </select>
-        {greska && <p>{greska}</p>}
+        {greska && <p style={{ color: 'red' }}>{greska}</p>}
         <button type="submit">Региструј се</button>
       </div>
       </form>
