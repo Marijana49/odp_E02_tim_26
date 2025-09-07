@@ -138,6 +138,7 @@ export const IzmjenaProfil = ({ usersApi }: IzmjenaProfilProps) => {
             placeholder="Број телефона"
             value={brTelefona || ""}
             name="brTel"
+            maxLength={15}
             onChange={(e) => setBrTelefona(e.target.value)}
           />
           <input
