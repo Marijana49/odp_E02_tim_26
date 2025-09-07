@@ -3,10 +3,15 @@ import { useState, useEffect } from 'react';
 import { Poruka } from '../../../../server/src/Domain/models/Poruka';
 import { PorukaEnum } from '../../../../server/src/Domain/enums/PorukaEnum';
 import { useAuth } from '../../hooks/auth/UseAuthHook';
-import { usersApi } from "../../api_services/users/UserApiService";
-import { MessagesApi } from '../../api_services/messages/MessageApiService';
+import type { IUsersAPIService } from '../../api_services/users/IUserApiService';
+import type { IMessageAPIService } from '../../api_services/messages/IMessageApiService';
 
-function PorukeKorisnika() {
+interface PorukeKorisnikaProps{
+  usersApi: IUsersAPIService;
+  messagesApi: IMessageAPIService;
+}
+
+function PorukeKorisnika({usersApi, messagesApi}: PorukeKorisnikaProps) {
   const { id } = useParams<{ id: string }>();
   const [poruke, setPoruke] = useState<Poruka[]>([]);
   const [novaPoruka, setNovaPoruka] = useState('');
@@ -28,13 +33,13 @@ function PorukeKorisnika() {
       };
       fetchContact();
     }
-  }, [id, token]);
+  }, [id, token, usersApi]);
 
   const fetchPoruke = async () => {
     if (!token || !user || !kontakt) return;
 
     try {
-      const svePoruke = await MessagesApi.getSvePoruke(token);
+      const svePoruke = await messagesApi.getSvePoruke(token);
       const filtrirane = svePoruke.filter(p =>
         (p.posiljalac === user.korisnickoIme && p.primalac === kontakt) ||
         (p.posiljalac === kontakt && p.primalac === user.korisnickoIme)
@@ -45,15 +50,15 @@ function PorukeKorisnika() {
       try {
         const azuriranaPoruka = { ...poruka, stanje: PorukaEnum.Procitano};
         console.log("Ažuriram poruku:", azuriranaPoruka);
-        await MessagesApi.updatePoruke(token, azuriranaPoruka);
+        await messagesApi.updatePoruke(token, azuriranaPoruka);
       } catch (err) {
         console.error("Greška pri ažuriranju statusa poruke:", err);
       }
     }
 
-    const azuriranePoruke = filtrirane.map(p => { return p;});
-
-    setPoruke(azuriranePoruke);
+    //const azuriranePoruke = filtrirane.map(p => { return p;});
+    setPoruke(filtrirane);
+    //setPoruke(azuriranePoruke);
     } catch (err) {
       console.error("Greška pri učitavanju poruka:", err);
     }
@@ -78,7 +83,7 @@ function PorukeKorisnika() {
     );
 
     try {
-      await MessagesApi.posaljiPoruku(nova, token ?? "");
+      await messagesApi.posaljiPoruku(nova, token ?? "");
       setNovaPoruka('');
       await fetchPoruke();
     } catch (error) {

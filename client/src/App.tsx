@@ -11,6 +11,7 @@ import KontrolnaTablaUserStranica from "./pages/kontrolna_tabla/KontrolnaTablaUs
 import KontrolnaTablaAdminStranica from "./pages/kontrolna_tabla/KontrolnaTablaAdmin";
 import NotFoundStranica from "./pages/not_found/NotFoundPage";
 import { usersApi } from "./api_services/users/UserApiService";
+import { MessagesApi } from "./api_services/messages/MessageApiService"  
 import PorukeKorisnika from './components/poruke/PorukeKorisnika';
 import { Profil } from "./components/profil/Profil";
 import { IzmjenaProfil } from "./components/profil/IzmjenaProfil";
@@ -22,10 +23,10 @@ function App() {
       <Route path="/login" element={<PrijavaStranica authApi={authApi} />} />
       <Route path="/register" element={<RegistracijaStranica authApi={authApi} />} />
       <Route path="/404" element={<NotFoundStranica />} />
-      <Route path="/korisnik/:id" element={<PorukeKorisnika />} /> 
+      <Route path="/korisnik/:id" element={<PorukeKorisnika usersApi={usersApi} messagesApi={MessagesApi} />} /> 
       <Route path="/profil" element={<Profil usersApi={usersApi} />} />
       <Route path="/Izmjenaprofila" element={<IzmjenaProfil usersApi={usersApi} />} />
-      <Route path="/poruke/:korIme" element={<PorukeKorisnika />} />
+      <Route path="/poruke/:korIme" element={<PorukeKorisnika usersApi={usersApi} messagesApi={MessagesApi} />} />
 
         <Route
           path="/user-dashboard"
