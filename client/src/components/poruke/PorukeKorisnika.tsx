@@ -56,9 +56,8 @@ function PorukeKorisnika({usersApi, messagesApi}: PorukeKorisnikaProps) {
       }
     }
 
-    //const azuriranePoruke = filtrirane.map(p => { return p;});
-    setPoruke(filtrirane);
-    //setPoruke(azuriranePoruke);
+    const azuriranePoruke = filtrirane.map(p => { return p;});
+    setPoruke(azuriranePoruke);
     } catch (err) {
       console.error("Greška pri učitavanju poruka:", err);
     }
